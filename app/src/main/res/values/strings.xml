@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">UDAS</string>
+
+    <string name="username_empty">NPM harus diisi!</string>
+    <string name="password_empty">Password harus diisi!</string>
+    <string name="connection_error">Tidak dapat terhubung ke internet!</string>
+</resources>

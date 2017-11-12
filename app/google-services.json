@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1043416332948",
+    "firebase_url": "https://da-system.firebaseio.com",
+    "project_id": "da-system",
+    "storage_bucket": "da-system.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1043416332948:android:855f7b11828be0fd",
+        "android_client_info": {
+          "package_name": "com.paperplanes.udas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1043416332948-n07s06u6eoh9c76bidh3se3g90hqq5bp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMI9HFlMStpNpIIK5W-o0j507A01JIYM8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
