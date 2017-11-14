@@ -1,6 +1,5 @@
 package com.paperplanes.udas.di.components;
 
-import com.paperplanes.udas.data.AnnouncementRepository;
 import com.paperplanes.udas.data.FirebaseTokenRefreshService;
 import com.paperplanes.udas.di.modules.AppModule;
 
@@ -18,5 +17,4 @@ public interface ServiceComponent {
 
     void inject(FirebaseTokenRefreshService client);
 
-    void inject(AnnouncementRepository client);
 }

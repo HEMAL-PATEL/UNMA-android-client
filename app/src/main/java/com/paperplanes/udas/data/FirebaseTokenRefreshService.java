@@ -5,17 +5,10 @@ import android.util.Log;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.paperplanes.udas.App;
-import com.paperplanes.udas.data.api.ServiceGenerator;
-import com.paperplanes.udas.data.api.UpdateTokenApi;
-import com.paperplanes.udas.data.api.response.JsonResp;
-import com.paperplanes.udas.di.components.DaggerServiceComponent;
-import com.paperplanes.udas.domain.SessionManager;
+import com.paperplanes.udas.data.network.api.UpdateTokenApi;
+import com.paperplanes.udas.auth.SessionManager;
 
 import javax.inject.Inject;
-
-import io.reactivex.SingleObserver;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
 
 /**
  * Created by abdularis on 07/11/17.

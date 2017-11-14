@@ -1,94 +1,75 @@
 package com.paperplanes.udas.data;
 
-import com.paperplanes.udas.data.api.AnnouncementApi;
-import com.paperplanes.udas.data.api.response.AnnouncementRespData;
-import com.paperplanes.udas.data.api.response.JsonResp;
-import com.paperplanes.udas.domain.SessionManager;
-import com.paperplanes.udas.domain.data.AnnouncementDataSource;
-import com.paperplanes.udas.domain.model.Announcement;
-import com.paperplanes.udas.domain.model.Attachment;
-import com.paperplanes.udas.domain.model.Description;
+import android.util.Log;
+
+import com.paperplanes.udas.data.network.api.AnnouncementApi;
+import com.paperplanes.udas.model.Announcement;
+import com.paperplanes.udas.model.Attachment;
+import com.paperplanes.udas.model.Description;
 
 import java.net.URL;
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
+import io.reactivex.*;
+import io.reactivex.schedulers.Schedulers;
 
-import io.reactivex.Completable;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.SingleSource;
-import io.reactivex.functions.Function;
+public class AnnouncementRepository {
 
-/**
- * Created by abdularis on 08/11/17.
- */
+    private ReactiveStore.AnnouncementStore mStore;
+    private AnnouncementApi mAnnouncementService;
 
-public class AnnouncementRepository implements AnnouncementDataSource {
-
-    private AnnouncementApi mApi;
-    private SessionManager mSessionManager;
-
-    @Inject
-    public AnnouncementRepository(AnnouncementApi announcementApi, SessionManager sessionManager) {
-        mApi = announcementApi;
-        mSessionManager = sessionManager;
+    public AnnouncementRepository(ReactiveStore.AnnouncementStore store,
+                                  AnnouncementApi announcementService) {
+        mStore = store;
+        mAnnouncementService = announcementService;
     }
 
-    @Override
-    public Observable<List<Announcement>> getAnnouncementList() {
-        if (!mSessionManager.isSessionSet()) {
-            return Observable.just(new ArrayList<>());
-        }
+    public Flowable<List<Announcement>> getAllAnnouncement() {
+        return mStore.getAll();
+    }
 
-        return mApi.getAnnouncementList("key=" + mSessionManager.getSession().getAccessToken())
+    public Completable fetchAnnouncements() {
+        return mAnnouncementService
+                .getAnnouncementList()
                 .toObservable()
-                .flatMap(new Function<JsonResp<List<AnnouncementRespData>>, Observable<AnnouncementRespData>>() {
-                    @Override
-                    public Observable<AnnouncementRespData> apply(JsonResp<List<AnnouncementRespData>> listJsonResp) throws Exception {
-                        if (listJsonResp.isSuccess()) {
-                            return Observable.fromIterable(listJsonResp.getData());
-                        }
-                        return Observable.empty();
-                    }
+                .subscribeOn(Schedulers.io())
+                .flatMap(resp -> {
+                    Log.v("ThreadName","repo: " + Thread.currentThread().getName());
+                    if (resp.isSuccess() && resp.getData() != null)
+                        return Observable.fromIterable(resp.getData());
+                    return Observable.empty();
                 })
-                .map(new Function<AnnouncementRespData, Announcement>() {
-                    @Override
-                    public Announcement apply(AnnouncementRespData resp) throws Exception {
-                        Announcement announcement = new Announcement();
-                        announcement.setId(resp.getId());
-                        announcement.setTitle(resp.getTitle());
-                        announcement.setLastUpdated(new Date(new Timestamp((long)resp.getLastUpdated()).getTime()));
-                        announcement.setRead(resp.isRead());
+                .map(resp -> {
+                    Announcement announcement = new Announcement();
+                    announcement.setId(resp.getId());
+                    announcement.setTitle(resp.getTitle());
+                    announcement.setLastUpdated(new Date((long) (resp.getLastUpdated() * 1000L)));
+                    announcement.setPublisher(resp.getPublisher());
+                    announcement.setRead(resp.isRead());
 
-                        if (resp.getDescription() != null) {
-                            Description desc = new Description();
-                            desc.setUrl(new URL(resp.getDescription().getUrl()));
-                            desc.setContent(resp.getDescription().getContent());
-                            desc.setSize(resp.getDescription().getSize());
-                            announcement.setDescription(desc);
-                        }
-
-                        if (resp.getAttachment() != null) {
-                            Attachment att = new Attachment();
-                            att.setUrl(new URL(resp.getAttachment().getUrl()));
-                            att.setName(resp.getAttachment().getName());
-                            att.setMimeType(resp.getAttachment().getMimetype());
-                            att.setSize(resp.getAttachment().getSize());
-                            announcement.setAttachment(att);
-                        }
-                        return announcement;
+                    if (resp.getDescription() != null) {
+                        Description desc = new Description();
+                        desc.setUrl(new URL(resp.getDescription().getUrl()));
+                        desc.setContent(resp.getDescription().getContent());
+                        desc.setSize(resp.getDescription().getSize());
+                        announcement.setDescription(desc);
                     }
+
+                    if (resp.getAttachment() != null) {
+                        Attachment att = new Attachment();
+                        att.setUrl(new URL(resp.getAttachment().getUrl()));
+                        att.setName(resp.getAttachment().getName());
+                        att.setMimeType(resp.getAttachment().getMimetype());
+                        att.setSize(resp.getAttachment().getSize());
+                        announcement.setAttachment(att);
+                    }
+
+                    return announcement;
                 })
                 .toList()
-                .toObservable();
+                .doOnSuccess(announcements -> mStore.replaceAll(announcements))
+                .toCompletable();
     }
 
-    @Override
-    public Completable fetchAnnouncements() {
-        return null;
-    }
 }

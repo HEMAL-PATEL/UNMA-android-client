@@ -3,25 +3,24 @@ package com.paperplanes.udas.di.modules;
 import android.app.Application;
 import android.content.Context;
 
+import com.paperplanes.udas.common.AuthInterceptor;
+import com.paperplanes.udas.common.ConnectivityInterceptor;
 import com.paperplanes.udas.data.AnnouncementRepository;
-import com.paperplanes.udas.data.NetAuthService;
-import com.paperplanes.udas.data.api.AnnouncementApi;
-import com.paperplanes.udas.data.api.AuthApi;
-import com.paperplanes.udas.data.api.ServiceGenerator;
-import com.paperplanes.udas.data.api.UpdateTokenApi;
-import com.paperplanes.udas.domain.SessionManager;
-import com.paperplanes.udas.domain.data.AnnouncementDataSource;
-import com.paperplanes.udas.domain.data.AuthService;
-import com.paperplanes.udas.domain.executor.ExecutionScheduler;
-import com.paperplanes.udas.domain.executor.PostExecutionScheduler;
-import com.paperplanes.udas.presentation.AndroidIoThread;
-import com.paperplanes.udas.presentation.AndroidMainThread;
-import com.paperplanes.udas.presentation.AndroidSessionManager;
+import com.paperplanes.udas.data.MemoryAnnouncementStore;
+import com.paperplanes.udas.data.network.WebAuthentication;
+import com.paperplanes.udas.data.network.api.AnnouncementApi;
+import com.paperplanes.udas.data.network.api.AuthApi;
+import com.paperplanes.udas.data.network.api.WebServiceGenerator;
+import com.paperplanes.udas.data.network.api.UpdateTokenApi;
+import com.paperplanes.udas.auth.SessionManager;
+import com.paperplanes.udas.auth.Authentication;
+import com.paperplanes.udas.AndroidSessionManager;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import okhttp3.OkHttpClient;
 
 /**
  * Created by abdularis on 02/11/17.
@@ -49,43 +48,41 @@ public class AppModule {
     }
 
     @Provides
-    @Singleton
-    ExecutionScheduler provideExecutionScheduler() {
-        return new AndroidIoThread();
+    Authentication provideAuthService(AuthApi authApi, SessionManager sessionManager) {
+        return new WebAuthentication(authApi, sessionManager);
     }
 
     @Provides
     @Singleton
-    PostExecutionScheduler providePostExecutionScheduler() {
-        return new AndroidMainThread();
-    }
-
-    @Provides
-    AuthService provideAuthService(AuthApi authApi) {
-        return new NetAuthService(authApi);
-    }
-
-    @Provides
-    @Singleton
-    AuthApi provideAuthApi() {
-        return ServiceGenerator.createService(AuthApi.class);
+    WebServiceGenerator provideWebServiceGenerator(Context context, SessionManager sessionManager) {
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+                .addInterceptor(new ConnectivityInterceptor(context))
+                .addInterceptor(new AuthInterceptor(sessionManager))
+                .build();
+        return new WebServiceGenerator(httpClient);
     }
 
     @Provides
     @Singleton
-    UpdateTokenApi provideUpdateTokenApi() {
-        return ServiceGenerator.createService(UpdateTokenApi.class);
+    AuthApi provideAuthApi(WebServiceGenerator webServiceGenerator) {
+        return webServiceGenerator.createService(AuthApi.class);
     }
 
     @Provides
     @Singleton
-    AnnouncementApi provideAnnouncementApi() {
-        return ServiceGenerator.createService(AnnouncementApi.class);
+    UpdateTokenApi provideUpdateTokenApi(WebServiceGenerator webServiceGenerator) {
+        return webServiceGenerator.createService(UpdateTokenApi.class);
     }
 
     @Provides
     @Singleton
-    AnnouncementDataSource provideAnnouncementDataSource(AnnouncementApi announcementApi, SessionManager sessionManager) {
-        return new AnnouncementRepository(announcementApi, sessionManager);
+    AnnouncementApi provideAnnouncementApi(WebServiceGenerator webServiceGenerator) {
+        return webServiceGenerator.createService(AnnouncementApi.class);
+    }
+
+    @Provides
+    @Singleton
+    AnnouncementRepository provideAnnouncementRepository(AnnouncementApi api) {
+        return new AnnouncementRepository(new MemoryAnnouncementStore(), api);
     }
 }

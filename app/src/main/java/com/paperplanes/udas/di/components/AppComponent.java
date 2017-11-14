@@ -1,8 +1,9 @@
 package com.paperplanes.udas.di.components;
 
+import com.paperplanes.udas.announcementlist.AnnouncementListFragment;
 import com.paperplanes.udas.di.modules.AppModule;
-import com.paperplanes.udas.presentation.activity.AnnouncementsActivity;
-import com.paperplanes.udas.presentation.activity.LoginActivity;
+import com.paperplanes.udas.login.LoginActivity;
+import com.paperplanes.udas.main.MainActivity;
 
 import javax.inject.Singleton;
 
@@ -18,6 +19,7 @@ public interface AppComponent {
 
     void inject(LoginActivity client);
 
-    void inject(AnnouncementsActivity client);
+    void inject(AnnouncementListFragment client);
 
+    void inject(MainActivity client);
 }

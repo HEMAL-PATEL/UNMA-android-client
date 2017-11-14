@@ -1,7 +1,10 @@
 <resources>
-    <string name="app_name">UDAS</string>
+    <string name="app_name">UNMA</string>
 
     <string name="username_empty">NPM harus diisi!</string>
     <string name="password_empty">Password harus diisi!</string>
     <string name="connection_error">Tidak dapat terhubung ke internet!</string>
+
+    <string name="open_drawer">Open Drawer</string>
+    <string name="close_drawer">Close Drawer</string>
 </resources>
