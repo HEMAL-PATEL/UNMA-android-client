@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,8 @@ public class AnnouncementListFragment extends Fragment implements AnnouncementLi
     @Inject
     AnnouncementListPresenter mPresenter;
 
+    private OnItemClickListener mClickListener;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable
@@ -53,12 +56,18 @@ public class AnnouncementListFragment extends Fragment implements AnnouncementLi
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.v("AnnouncementList", "onViewCreated()");
 
         ButterKnife.bind(this, view);
         ((App) getActivity().getApplication()).getAppComponent().inject(this);
 
         mPresenter.setView(this);
-        mAnnouncementAdapter = new AnnouncementAdapter(new ArrayList<>());
+        mAnnouncementAdapter = new AnnouncementAdapter(getActivity(), new ArrayList<>());
+        mAnnouncementAdapter.setOnClickListener((itemView, announcement) -> {
+            if (mClickListener != null)
+                mClickListener.onClick(announcement);
+        });
+
         RecyclerView.LayoutManager layoutManager =
                 new LinearLayoutManager(getActivity().getApplicationContext());
         mRvAnnouncements.setLayoutManager(layoutManager);
@@ -66,12 +75,7 @@ public class AnnouncementListFragment extends Fragment implements AnnouncementLi
 
         mPresenter.retrieveData();
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mPresenter.refreshData();
-            }
-        });
+        mSwipeRefreshLayout.setOnRefreshListener(() -> mPresenter.refreshData());
     }
 
     @Override
@@ -99,5 +103,13 @@ public class AnnouncementListFragment extends Fragment implements AnnouncementLi
     @Override
     public void showError(String errMsg) {
         Toast.makeText(getActivity(), errMsg, Toast.LENGTH_SHORT).show();
+    }
+
+    public void setOnItemClickListener(OnItemClickListener clickListener) {
+        mClickListener = clickListener;
+    }
+
+    public interface OnItemClickListener {
+        void onClick(Announcement ann);
     }
 }

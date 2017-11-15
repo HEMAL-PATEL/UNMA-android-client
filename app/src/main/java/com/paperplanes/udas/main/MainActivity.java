@@ -3,6 +3,7 @@ package com.paperplanes.udas.main;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -17,9 +18,13 @@ import android.widget.Toast;
 
 import com.paperplanes.udas.App;
 import com.paperplanes.udas.R;
+import com.paperplanes.udas.announcementdetail.AnnouncementDetailFragment;
 import com.paperplanes.udas.announcementlist.AnnouncementListFragment;
 import com.paperplanes.udas.auth.SessionManager;
 import com.paperplanes.udas.login.LoginActivity;
+import com.paperplanes.udas.model.Announcement;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -43,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     ActionBarDrawerToggle mDrawerToggle;
 
     private AnnouncementListFragment mAnnouncementListFragment;
+    private AnnouncementDetailFragment mAnnouncementDetailFragment;
 
     @Inject
     MainPresenter mPresenter;
@@ -54,7 +60,18 @@ public class MainActivity extends AppCompatActivity implements MainView {
         ButterKnife.bind(this);
         ((App) getApplication()).getAppComponent().inject(this);
 
+        setSupportActionBar(mToolbar);
+
+        mAnnouncementDetailFragment = new AnnouncementDetailFragment();
         mAnnouncementListFragment = new AnnouncementListFragment();
+        mAnnouncementListFragment.setOnItemClickListener(announcement -> {
+            mAnnouncementDetailFragment.setCurrentAnnouncement(announcement);
+            FragmentManager fm = getSupportFragmentManager();
+            fm.beginTransaction()
+                    .replace(R.id.content_layout, mAnnouncementDetailFragment)
+                    .commit();
+        });
+
         mNavigationView.setNavigationItemSelectedListener(this::selectNavigationItem);
         selectNavigationItem(mNavigationView.getMenu().getItem(0));
 
@@ -85,6 +102,15 @@ public class MainActivity extends AppCompatActivity implements MainView {
             mDrawerLayout.closeDrawers();
         }
         else {
+            FragmentManager fm = getSupportFragmentManager();
+            List<Fragment> fragmentList = fm.getFragments();
+            if (fragmentList != null && fragmentList.size() > 0) {
+                if (fragmentList.get(0) instanceof AnnouncementDetailFragment) {
+                    goToAnnouncements();
+                    return;
+                }
+            }
+
             super.onBackPressed();
         }
     }

@@ -1,6 +1,6 @@
 package com.paperplanes.udas.model;
 
-public class LoginModel {
+public class LoginResult {
 
     private boolean mSuccess;
     private String mMessage;

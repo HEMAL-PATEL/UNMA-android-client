@@ -1,6 +1,9 @@
 package com.paperplanes.udas.common;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.paperplanes.udas.auth.SessionManager;
 
@@ -16,23 +19,34 @@ import okhttp3.Response;
 
 public class AuthInterceptor implements Interceptor {
 
+    private static final int HTTP_UNAUTHORIZED_RESPONSE_CODE = 401;
+
+    private Context mContext;
     private SessionManager mSessionManager;
 
-    public AuthInterceptor(SessionManager sessionManager) {
+    public AuthInterceptor(Context context, SessionManager sessionManager) {
         mSessionManager = sessionManager;
+        mContext = context;
     }
 
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
-        if (!mSessionManager.isSessionSet()) {
-            return chain.proceed(chain.request());
+        Request request = chain.request();
+        if (mSessionManager.isSessionSet()) {
+            String accessToken = mSessionManager.getSession().getAccessToken();
+            Request.Builder requestBuilder = request.newBuilder()
+                    .header("Authorization", "key=" + accessToken);
+            request = requestBuilder.build();
         }
 
-        String accessToken = mSessionManager.getSession().getAccessToken();
-        Request origReq = chain.request();
-        Request.Builder requestBuilder = origReq.newBuilder()
-                .header("Authorization", "key=" + accessToken);
+        Response response = chain.proceed(request);
+        if (response.code() == HTTP_UNAUTHORIZED_RESPONSE_CODE) {
+            mSessionManager.clearSession();
 
-        return chain.proceed(requestBuilder.build());
+            Intent intent = new Intent("UnauthorizedAccess");
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+        }
+
+        return response;
     }
 }

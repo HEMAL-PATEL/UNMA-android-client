@@ -1,22 +1,14 @@
 package com.paperplanes.udas.login;
 
 import com.paperplanes.udas.auth.Authentication;
-import com.paperplanes.udas.auth.SessionManager;
 import com.paperplanes.udas.common.NoConnectivityException;
-import com.paperplanes.udas.model.LoginModel;
+import com.paperplanes.udas.model.LoginResult;
 
-import java.net.ConnectException;
 import java.net.SocketException;
-import java.sql.Timestamp;
-import java.util.Date;
 
 import javax.inject.Inject;
 
-import com.paperplanes.udas.auth.Session;
-
-import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableSingleObserver;
 
 
@@ -52,15 +44,15 @@ public class LoginPresenter {
         mView.showLoading(true);
         mAuth.login(username, password)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSingleObserver<LoginModel>() {
+                .subscribeWith(new DisposableSingleObserver<LoginResult>() {
                     @Override
-                    public void onSuccess(LoginModel loginModel) {
+                    public void onSuccess(LoginResult loginResult) {
                         mView.showLoading(false);
-                        if (loginModel.isSuccess()) {
+                        if (loginResult.isSuccess()) {
                             mView.onLoginSuccess();
                         }
                         else {
-                            mView.onLoginFailed(loginModel.getMessage());
+                            mView.onLoginFailed(loginResult.getMessage());
                         }
                     }
 

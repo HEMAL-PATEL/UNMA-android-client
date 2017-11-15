@@ -57,7 +57,7 @@ public class AppModule {
     WebServiceGenerator provideWebServiceGenerator(Context context, SessionManager sessionManager) {
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .addInterceptor(new ConnectivityInterceptor(context))
-                .addInterceptor(new AuthInterceptor(sessionManager))
+                .addInterceptor(new AuthInterceptor(context, sessionManager))
                 .build();
         return new WebServiceGenerator(httpClient);
     }

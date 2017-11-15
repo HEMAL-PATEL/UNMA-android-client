@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login_2);
+        setContentView(R.layout.activity_login);
 
         ButterKnife.setDebug(true);
         ButterKnife.bind(this);
