@@ -39,12 +39,12 @@ public class LoginPresenter {
     }
 
     public void login(String username, String password) {
-        if (username.isEmpty()) {
+        if (username == null || username.isEmpty()) {
             mView.showUsernameError("Username tidak boleh kosong");
             return;
         }
 
-        if (password.isEmpty()) {
+        if (password == null || password.isEmpty()) {
             mView.showPasswordError("Password tidak boleh kosong");
             return;
         }
@@ -57,7 +57,7 @@ public class LoginPresenter {
                     public void onSuccess(LoginModel loginModel) {
                         mView.showLoading(false);
                         if (loginModel.isSuccess()) {
-                            mView.onLoginSuccess();
+                            mView.onLoginSuccess(username, password, loginModel.getAccessToken());
                         }
                         else {
                             mView.onLoginFailed(loginModel.getMessage());

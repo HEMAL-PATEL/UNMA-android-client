@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<account-authenticator
+    android:accountType="com.paperplanes.unma.account"
+    android:icon="@mipmap/ic_launcher"
+    android:smallIcon="@mipmap/ic_launcher"
+    android:label="UNMA"
+    android:accountPreferences="@xml/account_prefs"
+    xmlns:android="http://schemas.android.com/apk/res/android"/>

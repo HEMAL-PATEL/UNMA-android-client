@@ -14,7 +14,7 @@ public interface LoginView {
 
     void showPasswordError(String errMessage);
 
-    void onLoginSuccess();
+    void onLoginSuccess(String username, String password, String authToken);
 
     void onLoginFailed(String message);
 }

@@ -1,6 +1,7 @@
 package com.paperplanes.udas.di.components;
 
 import com.paperplanes.udas.announcementlist.AnnouncementListFragment;
+import com.paperplanes.udas.auth.UnmaAuthenticatorActivity;
 import com.paperplanes.udas.di.modules.AppModule;
 import com.paperplanes.udas.login.LoginActivity;
 import com.paperplanes.udas.main.MainActivity;
@@ -18,6 +19,8 @@ import dagger.Component;
 public interface AppComponent {
 
     void inject(LoginActivity client);
+
+    void inject(UnmaAuthenticatorActivity client);
 
     void inject(AnnouncementListFragment client);
 
