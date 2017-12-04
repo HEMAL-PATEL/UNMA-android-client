@@ -126,7 +126,6 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
                     downloadProgress.setVisibility(View.GONE);
                     offlinePin.setVisibility(View.VISIBLE);
                 } else if (state == Attachment.STATE_DOWNLOADING) {
-                    downloadProgress.setProgress(announcement.getAttachment().getDownloadProgress());
                     downloadBtn.setVisibility(View.GONE);
                     downloadProgress.setVisibility(View.VISIBLE);
                     offlinePin.setVisibility(View.GONE);

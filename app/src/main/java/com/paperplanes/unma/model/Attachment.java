@@ -1,7 +1,5 @@
 package com.paperplanes.unma.model;
 
-import io.reactivex.Observable;
-
 /**
  * Created by abdularis on 08/11/17.
  */
@@ -17,10 +15,7 @@ public class Attachment {
     private String mName;
     private String mMimeType;
     private long mSize;
-
-    private int mDownloadProgress;
     private int mState;
-    private Observable<Integer> mProgressObservable;
 
     public Attachment() {
         this(null, "", "", "", 0);
@@ -32,16 +27,6 @@ public class Attachment {
         mName = name;
         mMimeType = mimeType;
         mSize = size;
-        mProgressObservable = Observable.empty();
-        mDownloadProgress = 0;
-    }
-
-    public int getDownloadProgress() {
-        return mDownloadProgress;
-    }
-
-    public void setDownloadProgress(int downloadProgress) {
-        mDownloadProgress = downloadProgress;
     }
 
     public void setState(int state) {
