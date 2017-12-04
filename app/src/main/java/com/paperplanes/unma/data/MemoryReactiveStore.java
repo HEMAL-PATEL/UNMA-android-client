@@ -83,7 +83,7 @@ public class MemoryReactiveStore <Key, Value> implements ReactiveStore<Key, Valu
         mCacheList.clear();
         mMapCache.clear();
         notifySingularObservers();
-        mProcessorAll.onNext(Optional.of(null));
+        mProcessorAll.onNext(Optional.empty());
         mProcessorSingularMap.clear();
     }
 
