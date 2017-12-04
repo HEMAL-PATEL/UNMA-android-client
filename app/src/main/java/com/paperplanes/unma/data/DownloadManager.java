@@ -4,14 +4,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.paperplanes.unma.data.database.DatabaseAccess;
-import com.paperplanes.unma.infrastructure.DownloadManagerService;
 import com.paperplanes.unma.model.Announcement;
 import com.paperplanes.unma.model.Attachment;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,9 @@ import javax.inject.Inject;
  */
 
 public class DownloadManager {
+
+    public static final String ROOT_DOWNLOAD_DIR =
+            Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "UnmaApp";
 
     private List<DownloadEventListener> mListenerList;
     private HashMap<String, Announcement> mAnnouncementMap;
@@ -51,6 +55,7 @@ public class DownloadManager {
                         announcement.getAttachment().getUrl());
 
         Intent intent = new Intent(mContext, DownloadManagerService.class);
+        intent.setAction(DownloadManagerService.ACTION_DOWNLOAD_ATTACHMENT);
         intent.putExtra(DownloadManagerService.EXTRA_DOWNLOAD_REQUEST, request);
         mContext.startService(intent);
     }

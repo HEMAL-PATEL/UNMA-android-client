@@ -37,7 +37,7 @@
             </intent-filter>
         </service>
 
-        <service android:name=".infrastructure.DownloadManagerService"/>
+        <service android:name=".data.DownloadManagerService"/>
         <activity android:name=".main.MainActivity"/>
         <activity
             android:name=".announcementdetail.AnnouncementDetailActivity"

@@ -3,7 +3,7 @@ package com.paperplanes.unma.di.components;
 import com.paperplanes.unma.App;
 import com.paperplanes.unma.announcementdetail.AnnouncementDetailActivity;
 import com.paperplanes.unma.announcementlist.AnnouncementListFragment;
-import com.paperplanes.unma.infrastructure.DownloadManagerService;
+import com.paperplanes.unma.data.DownloadManagerService;
 import com.paperplanes.unma.infrastructure.FirebaseNotificationService;
 import com.paperplanes.unma.infrastructure.FirebaseTokenRefreshService;
 import com.paperplanes.unma.di.modules.AppModule;

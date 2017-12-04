@@ -1,5 +1,6 @@
 package com.paperplanes.unma.data;
 
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -84,82 +85,6 @@ public class AnnouncementRepository {
                 });
     }
 
-//    public Observable<Integer> downloadAttachment(Announcement announcement) {
-//        String announcementId = announcement.getId();
-//        if (mPublishSubjectMap.containsKey(announcementId)) {
-//            return mPublishSubjectMap.get(announcementId);
-//        }
-//
-//        Attachment attachment = announcement.getAttachment();
-//        PublishSubject<Integer> publishSubject = PublishSubject.create();
-//        mPublishSubjectMap.put(announcementId, publishSubject);
-//
-//        mAnnouncementService.downloadAttachment(attachment.getUrl())
-//                .subscribeOn(Schedulers.newThread())
-//                .subscribe(new DisposableSingleObserver<ResponseBody>() {
-//                    @Override
-//                    public void onSuccess(ResponseBody resp) {
-//                        if (!FileUtil.isExternalStorageAvailable())
-//                            throw new ExternalStorageUnavailableException();
-//
-//                        String folder = mPrefs.getAttachmentDownloadFolder() + File.separator + announcementId;
-//                        File dir = new File(folder);
-//                        dir.mkdirs();
-//                        File file = new File(dir, attachment.getName() + ".temp");
-//
-//                        attachment.setState(Attachment.STATE_DOWNLOADING);
-//                        InputStream inputStream;
-//                        OutputStream outputStream;
-//                        try {
-//                            byte[] buffer = new byte[4096];
-//
-//                            inputStream = resp.byteStream();
-//                            outputStream = new FileOutputStream(file);
-//
-//                            long fileSize = resp.contentLength();
-//                            long downloaded = 0;
-//
-//                            long startTime = System.currentTimeMillis();
-//                            long ellapsedTime;
-//                            int read;
-//                            while ((read = inputStream.read(buffer)) > 0) {
-//                                outputStream.write(buffer, 0, read);
-//                                downloaded += read;
-//
-//                                ellapsedTime = System.currentTimeMillis() - startTime;
-//                                if (ellapsedTime >= 1000L) {
-//                                    startTime = System.currentTimeMillis();
-//
-//                                    publishSubject.onNext((int) (downloaded * 100 / fileSize));
-//                                }
-//                            }
-//                            publishSubject.onNext((int) (downloaded * 100 / fileSize));
-//
-//                            outputStream.flush();
-//                            file.renameTo(new File(folder, attachment.getName()));
-//                            attachment.setFilePath(file.getAbsolutePath());
-//                            attachment.setState(Attachment.STATE_OFFLINE);
-//                            mDatabaseAccess.updateAttachmentFilePath(announcementId, attachment.getFilePath());
-//                            publishSubject.onComplete();
-//                            mPublishSubjectMap.remove(announcementId);
-//
-//                        } catch (Exception e) {
-//                            publishSubject.onError(e);
-//
-//                            attachment.setState(Attachment.STATE_ONLINE);
-//                            mPublishSubjectMap.remove(announcementId);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable throwable) {
-//                        publishSubject.onError(throwable);
-//                        mPublishSubjectMap.remove(announcementId);
-//                    }
-//                });
-//        return publishSubject;
-//    }
-
     public Flowable<Optional<Announcement>> get(String id) {
         return mStore.getSingular(id)
                 .subscribeOn(Schedulers.io())
@@ -206,7 +131,6 @@ public class AnnouncementRepository {
                                 .toList()
                                 .toFlowable();
                     }
-//                    return Flowable.empty();
                     return Flowable.just(new ArrayList<>());
                 });
     }
@@ -298,7 +222,7 @@ public class AnnouncementRepository {
 
     private String getAttachmentFilePath(Announcement announcement) {
         if (announcement.getAttachment() != null)
-            return mPrefs.getAttachmentDownloadFolder() +
+            return DownloadManager.ROOT_DOWNLOAD_DIR +
                     File.separator +
                     announcement.getId() +
                     File.separator +

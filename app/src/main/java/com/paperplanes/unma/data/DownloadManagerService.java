@@ -1,21 +1,17 @@
-package com.paperplanes.unma.infrastructure;
+package com.paperplanes.unma.data;
 
 import android.app.IntentService;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.paperplanes.unma.App;
 import com.paperplanes.unma.common.FileUtil;
 import com.paperplanes.unma.common.exceptions.ExternalStorageUnavailableException;
-import com.paperplanes.unma.data.AttachmentDownloadRequest;
 import com.paperplanes.unma.data.network.api.AnnouncementApi;
 
 import java.io.BufferedInputStream;
@@ -23,7 +19,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
 
 import javax.inject.Inject;
 
@@ -40,6 +35,8 @@ public class DownloadManagerService extends IntentService {
 
     private static final long PROGRESS_UPDATE_INTERVAL = 1000L;
 
+    public static final String ACTION_DOWNLOAD_ATTACHMENT = "DOWNLOAD_FILE";
+
     public static final String ACTION_DOWNLOAD_PROGRESSED = "DOWNLOAD_PROGRESSED";
     public static final String ACTION_DOWNLOAD_STARTED = "DOWNLOAD_STARTED";
     public static final String ACTION_DOWNLOAD_FINISHED = "DOWNLOAD_FINISHED";
@@ -49,9 +46,6 @@ public class DownloadManagerService extends IntentService {
     public static final String EXTRA_ANNOUNCEMENT_ID = "ANNOUNCEMENT_ID";
     public static final String EXTRA_DOWNLOAD_PROGRESS = "DOWNLOAD_PROGRESS";
     public static final String EXTRA_DOWNLOAD_FILE_PATH = "DOWNLOAD_FILE_PATH";
-
-    private static final String ROOT_DOWNLOAD_DIR =
-            Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "UnmaApp";
 
     private LocalBroadcastManager mBroadcastManager;
     private NotificationCompat.Builder mNotifBuilder;
@@ -81,9 +75,14 @@ public class DownloadManagerService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         if (intent != null) {
-            AttachmentDownloadRequest request = intent.getParcelableExtra(EXTRA_DOWNLOAD_REQUEST);
-            if (request != null) {
-                download(request);
+            String action = intent.getAction();
+            if (action == null) return;
+
+            if (action.equals(ACTION_DOWNLOAD_ATTACHMENT)) {
+                AttachmentDownloadRequest request = intent.getParcelableExtra(EXTRA_DOWNLOAD_REQUEST);
+                if (request != null) {
+                    download(request);
+                }
             }
         }
     }
@@ -148,7 +147,7 @@ public class DownloadManagerService extends IntentService {
                         if (!FileUtil.isExternalStorageAvailable())
                             throw new ExternalStorageUnavailableException();
 
-                        String folder = ROOT_DOWNLOAD_DIR + File.separator + announcementId;
+                        String folder = DownloadManager.ROOT_DOWNLOAD_DIR + File.separator + announcementId;
                         File dir = new File(folder);
                         if (!dir.exists() && !dir.mkdirs()) {
                             return;
