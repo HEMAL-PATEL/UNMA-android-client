@@ -30,6 +30,12 @@
         android:orientation="vertical"
         android:gravity="center"
         android:visibility="gone">
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginBottom="20dp"
+            android:tint="#c4c4c4"
+            android:src="@drawable/ic_empty_drawer"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
