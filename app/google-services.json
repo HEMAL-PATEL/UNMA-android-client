@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1043416332948:android:855f7b11828be0fd",
+        "mobilesdk_app_id": "1:1043416332948:android:75ff85b5c2adc42a",
         "android_client_info": {
-          "package_name": "com.paperplanes.udas"
+          "package_name": "com.paperplanes.unma"
         }
       },
       "oauth_client": [

@@ -1,13 +1,19 @@
 <resources>
     <string name="app_name">UNMA</string>
 
-    <string name="username_empty">NPM harus diisi!</string>
-    <string name="password_empty">Password harus diisi!</string>
     <string name="connection_error">Tidak dapat terhubung ke internet!</string>
 
     <string name="open_drawer">Open Drawer</string>
     <string name="close_drawer">Close Drawer</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="msg_login_success">Login sukses</string>
+    <string name="msg_logging_in">Logging in…</string>
+
+    <string name="err_username_empty">NPM harus diisi!</string>
+    <string name="err_password_empty">Password harus diisi!</string>
+    <string name="err_malformed_username">Format NPM tidak benar</string>
+    <string name="err_no_connectivity">Tidak ada koneksi</string>
+    <string name="err_cant_connect">Tidak dapat terhubung ke server</string>
+    <string name="err_unknown">Terjadi kesalahan</string>
+    <string name="about_title">About</string>
 </resources>

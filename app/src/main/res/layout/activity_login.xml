@@ -9,7 +9,7 @@
     android:paddingRight="8dp"
     android:fitsSystemWindows="true"
     android:background="@android:color/white"
-    tools:context="com.paperplanes.udas.login.LoginActivity">
+    tools:context="com.paperplanes.unma.login.LoginActivity">
 
     <LinearLayout
         android:id="@+id/login_form"

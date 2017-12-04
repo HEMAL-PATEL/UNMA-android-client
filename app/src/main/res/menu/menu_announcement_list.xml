@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        app:showAsAction="always"
+        android:title="Filter"
+        android:icon="@drawable/ic_filter_list">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/menu_filter_list_all"
+                    android:title="Show All"/>
+                <item
+                    android:id="@+id/menu_filter_list_by_unread"
+                    android:title="Show Unread"/>
+                <item
+                    android:id="@+id/menu_filter_list_by_read"
+                    android:title="Show Read"/>
+                <item
+                    android:id="@+id/menu_filter_list_with_attachment"
+                    android:title="Show Attachment"/>
+            </group>
+        </menu>
+    </item>
+
+    <item
+        app:showAsAction="never"
+        android:title="Force refresh"
+        android:id="@+id/menu_force_refresh"/>
+</menu>
