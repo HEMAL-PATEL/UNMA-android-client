@@ -25,6 +25,8 @@ import com.paperplanes.unma.data.network.api.UpdateTokenApi;
 import com.paperplanes.unma.auth.SessionManager;
 import com.paperplanes.unma.auth.Authentication;
 import com.paperplanes.unma.AndroidSessionManager;
+import com.paperplanes.unma.data.pendingtask.MarkReadTaskDatabase;
+import com.paperplanes.unma.data.pendingtask.TaskDatabaseHelper;
 import com.paperplanes.unma.login.LoginViewModel;
 import com.paperplanes.unma.main.MainViewModel;
 import com.paperplanes.unma.model.Announcement;
@@ -106,6 +108,12 @@ public class AppModule {
 
     @Provides
     @Singleton
+    MarkReadTaskDatabase provideMarkReadTaskDatabase(Context context) {
+        return new MarkReadTaskDatabase(new TaskDatabaseHelper(context));
+    }
+
+    @Provides
+    @Singleton
     AnnouncementRepositoryPrefs provideAnnouncementRepositoryPrefs(Context context) {
         return new AnnouncementRepositoryPrefs(context);
     }
@@ -121,8 +129,9 @@ public class AppModule {
     AnnouncementRepository provideAnnouncementRepository(MemoryReactiveStore<String, Announcement> memoryReactive,
                                                          AnnouncementApi api,
                                                          DatabaseAccess databaseAccess,
+                                                         MarkReadTaskDatabase markReadTaskDatabase,
                                                          AnnouncementRepositoryPrefs prefs) {
-        return new AnnouncementRepository(memoryReactive, api, databaseAccess, prefs);
+        return new AnnouncementRepository(memoryReactive, api, databaseAccess, markReadTaskDatabase, prefs);
     }
 
     @Provides

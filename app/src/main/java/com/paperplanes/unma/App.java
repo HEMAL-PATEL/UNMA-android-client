@@ -2,14 +2,18 @@ package com.paperplanes.unma;
 
 import android.app.Application;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.paperplanes.unma.auth.SessionManager;
+import com.paperplanes.unma.data.AnnouncementRepository;
 import com.paperplanes.unma.di.components.AppComponent;
 import com.paperplanes.unma.di.components.DaggerAppComponent;
 import com.paperplanes.unma.di.modules.AppModule;
+import com.paperplanes.unma.infrastructure.NetworkStateChangeListener;
 import com.paperplanes.unma.login.LoginActivity;
 
 import java.io.InputStream;
@@ -33,6 +37,9 @@ public class App extends Application {
     @Inject
     OkHttpClient mOkHttpClient;
 
+    @Inject
+    AnnouncementRepository mAnnouncementRepository;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -53,6 +60,9 @@ public class App extends Application {
         );
 
         Glide.get(this).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(mOkHttpClient));
+
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(new NetworkStateChangeListener(mAnnouncementRepository), intentFilter);
     }
 
     public AppComponent getAppComponent() {

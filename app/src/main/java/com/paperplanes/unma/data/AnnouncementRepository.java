@@ -10,6 +10,8 @@ import com.paperplanes.unma.common.exceptions.UnauthorizedNetworkException;
 import com.paperplanes.unma.data.database.DatabaseAccess;
 import com.paperplanes.unma.data.network.api.AnnouncementApi;
 import com.paperplanes.unma.data.network.api.response.AnnouncementRespData;
+import com.paperplanes.unma.data.pendingtask.MarkReadTask;
+import com.paperplanes.unma.data.pendingtask.MarkReadTaskDatabase;
 import com.paperplanes.unma.model.Announcement;
 import com.paperplanes.unma.model.Attachment;
 import com.paperplanes.unma.model.Description;
@@ -19,7 +21,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.reactivex.*;
+import io.reactivex.functions.Action;
+import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 
 public class AnnouncementRepository {
@@ -28,22 +34,30 @@ public class AnnouncementRepository {
     private MemoryReactiveStore<String, Announcement> mStore;
     private AnnouncementApi mAnnouncementService;
     private DatabaseAccess mDatabaseAccess;
+    private MarkReadTaskDatabase mMarkReadTaskDatabase;
     private AnnouncementRepositoryPrefs mPrefs;
 
     public AnnouncementRepository(MemoryReactiveStore<String, Announcement> store,
                                   AnnouncementApi announcementService,
                                   DatabaseAccess databaseAccess,
+                                  MarkReadTaskDatabase markReadTaskDatabase,
                                   AnnouncementRepositoryPrefs announcementRepositoryPrefs) {
         mStore = store;
         mAnnouncementService = announcementService;
         mDatabaseAccess = databaseAccess;
+        mMarkReadTaskDatabase = markReadTaskDatabase;
         mPrefs = announcementRepositoryPrefs;
     }
 
-    public void clearAll() {
+    public void reset() {
         mPrefs.setSinceUpdated(0);
+    }
+
+    public void clearAll() {
+        reset();
 
         mDatabaseAccess.clearAll();
+        mMarkReadTaskDatabase.clearAll();
         mStore.clearAll();
     }
 
@@ -58,8 +72,9 @@ public class AnnouncementRepository {
                 })
                 .doOnError(throwable -> {
                     Log.d(TAG, "Failed to mark announcement as read: " + throwable.toString());
-                    // TODO save the task and try again later
-                });
+                    mMarkReadTaskDatabase.insert(new MarkReadTask(announcement.getId()));
+                })
+                .andThen(processAllPendingTask());
     }
 
     public Single<Announcement> getDescriptionContent(@NonNull Announcement announcement) {
@@ -97,8 +112,7 @@ public class AnnouncementRepository {
     }
 
     public Completable fetch(String id) {
-        return mAnnouncementService.getAnnouncement(id)
-                .subscribeOn(Schedulers.io())
+        Completable fetch = mAnnouncementService.getAnnouncement(id)
                 .flatMap(resp -> {
                     if (resp.isSuccess() && resp.getData() != null)
                         return Single.just(resp.getData());
@@ -110,6 +124,10 @@ public class AnnouncementRepository {
                     mStore.storeSingular(announcement);
                 })
                 .toCompletable();
+
+        return processAllPendingTask()
+                .andThen(fetch)
+                .subscribeOn(Schedulers.io());
     }
 
     public Flowable<List<Announcement>> getAnnouncements() {
@@ -136,10 +154,9 @@ public class AnnouncementRepository {
     }
 
     public Completable fetchAnnouncements() {
-        return mAnnouncementService
+        Completable fetch = mAnnouncementService
                 .getAnnouncementList(mPrefs.getSinceUpdated() / 1000) // diserver seconds
                 .toObservable()
-                .subscribeOn(Schedulers.io())
                 .flatMap(resp -> {
                     if (resp.isSuccess() && resp.getData() != null)
                         return Observable.fromIterable(resp.getData());
@@ -167,8 +184,26 @@ public class AnnouncementRepository {
                     mPrefs.setSinceUpdated(System.currentTimeMillis());
                 })
                 .toCompletable();
+
+        return processAllPendingTask()
+                .andThen(fetch)
+                .subscribeOn(Schedulers.io());
     }
 
+    public Completable processAllPendingTask() {
+        List<MarkReadTask> tasks = mMarkReadTaskDatabase.getAll();
+        if (tasks.size() > 0) {
+            List<Completable> completableList = new ArrayList<>();
+            for (MarkReadTask task : tasks) {
+                completableList.add(mAnnouncementService.markAsRead(task.getAnnouncementId()));
+            }
+
+            return Completable
+                    .merge(completableList)
+                    .doOnComplete(() -> mMarkReadTaskDatabase.clearAll());
+        }
+        return Completable.complete();
+    }
 
     private Announcement mapFromApiResponse(AnnouncementRespData resp) {
         Announcement announcement = new Announcement();

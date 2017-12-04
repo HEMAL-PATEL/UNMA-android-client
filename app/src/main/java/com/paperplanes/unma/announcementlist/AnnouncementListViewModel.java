@@ -75,7 +75,7 @@ public class AnnouncementListViewModel extends ViewModel {
 
     public void forceRefresh() {
         mLoading.setValue(true);
-        mRepo.clearAll();
+        mRepo.reset();
         refresh();
     }
 
