@@ -1,10 +1,11 @@
 package com.paperplanes.unma.model;
 
-import java.net.URL;
 import java.util.Date;
 
 /**
  * Created by abdularis on 08/11/17.
+ *
+ * Represent announcement, it's a core model
  */
 
 public class Announcement {

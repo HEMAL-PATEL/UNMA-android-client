@@ -3,14 +3,10 @@ package com.paperplanes.unma.main;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
-import com.paperplanes.unma.R;
 import com.paperplanes.unma.ResourceProvider;
 import com.paperplanes.unma.auth.Authentication;
-import com.paperplanes.unma.common.exceptions.NoConnectivityException;
 import com.paperplanes.unma.common.SingleLiveEvent;
 import com.paperplanes.unma.data.AnnouncementRepository;
-
-import java.net.SocketException;
 
 import javax.inject.Inject;
 

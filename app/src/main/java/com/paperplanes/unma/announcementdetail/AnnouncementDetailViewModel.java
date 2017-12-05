@@ -8,14 +8,11 @@ import com.paperplanes.unma.common.SingleLiveEvent;
 import com.paperplanes.unma.data.AnnouncementRepository;
 import com.paperplanes.unma.data.DownloadManager;
 import com.paperplanes.unma.model.Announcement;
-import com.paperplanes.unma.model.Attachment;
 import com.paperplanes.unma.model.Description;
 
-import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableCompletableObserver;
-import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.subscribers.DisposableSubscriber;
 

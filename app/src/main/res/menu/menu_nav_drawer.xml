@@ -4,27 +4,27 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/menu_announcements"
-            android:title="Pengumuman"
+            android:title="@string/action_nav_announcements"
             android:icon="@drawable/ic_announcement"/>
         <item
             android:id="@+id/menu_media"
-            android:title="Media"
+            android:title="@string/action_nav_media"
             android:icon="@drawable/ic_media"/>
     </group>
     <group android:id="@+id/group2">
         <item
             android:id="@+id/menu_settings"
-            android:title="Settings"
+            android:title="@string/action_nav_settings"
             android:icon="@drawable/ic_settings"/>
         <item
             android:id="@+id/menu_about"
-            android:title="About"
+            android:title="@string/action_nav_about"
             android:icon="@drawable/ic_about"/>
     </group>
     <group android:id="@+id/group3">
         <item
             android:id="@+id/menu_logout"
-            android:title="Logout"
+            android:title="@string/action_nav_logout"
             android:icon="@drawable/ic_logout"/>
     </group>
 

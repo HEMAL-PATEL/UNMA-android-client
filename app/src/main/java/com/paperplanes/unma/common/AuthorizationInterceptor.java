@@ -1,6 +1,5 @@
 package com.paperplanes.unma.common;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.paperplanes.unma.auth.SessionManager;

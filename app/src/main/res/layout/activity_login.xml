@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
-                android:hint="Npm"
+                android:hint="@string/login_username"
                 android:inputType="text"/>
         </android.support.design.widget.TextInputLayout>
 
@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
-                android:hint="Password"
+                android:hint="@string/login_password"
                 android:inputType="textPassword"/>
         </android.support.design.widget.TextInputLayout>
 
@@ -66,7 +66,7 @@
             android:layout_marginTop="14dp"
             android:background="@drawable/bg_btn_login"
             android:padding="8dp"
-            android:text="Login"
+            android:text="@string/login_login_text"
             android:textColor="@android:color/white"/>
     </LinearLayout>
 

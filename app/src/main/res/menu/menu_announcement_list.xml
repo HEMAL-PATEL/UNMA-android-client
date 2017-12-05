@@ -2,29 +2,29 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        app:showAsAction="always"
-        android:title="Filter"
+        app:showAsAction="ifRoom"
+        android:title="@string/action_menu_filter"
         android:icon="@drawable/ic_filter_list">
         <menu>
             <group android:checkableBehavior="single">
                 <item
                     android:id="@+id/menu_filter_list_all"
-                    android:title="Show All"/>
+                    android:title="@string/action_menu_show_all"/>
                 <item
                     android:id="@+id/menu_filter_list_by_unread"
-                    android:title="Show Unread"/>
+                    android:title="@string/action_menu_show_unread"/>
                 <item
                     android:id="@+id/menu_filter_list_by_read"
-                    android:title="Show Read"/>
+                    android:title="@string/action_menu_show_read"/>
                 <item
                     android:id="@+id/menu_filter_list_with_attachment"
-                    android:title="Show Attachment"/>
+                    android:title="@string/action_menu_show_attachment"/>
             </group>
         </menu>
     </item>
 
     <item
         app:showAsAction="never"
-        android:title="Force refresh"
+        android:title="@string/action_menu_force_refresh"
         android:id="@+id/menu_force_refresh"/>
 </menu>

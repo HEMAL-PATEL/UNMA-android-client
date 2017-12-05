@@ -1,9 +1,10 @@
 package com.paperplanes.unma.model;
 
-import java.net.URL;
 
 /**
  * Created by abdularis on 08/11/17.
+ *
+ * Deskripsi pengumuman/konten
  */
 
 public class Description {

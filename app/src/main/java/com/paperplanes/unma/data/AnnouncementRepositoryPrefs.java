@@ -2,9 +2,6 @@ package com.paperplanes.unma.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Environment;
-
-import java.io.File;
 
 /**
  * Created by abdularis on 24/11/17.

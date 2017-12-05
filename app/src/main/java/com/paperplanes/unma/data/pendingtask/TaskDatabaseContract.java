@@ -1,9 +1,10 @@
 package com.paperplanes.unma.data.pendingtask;
 
-import android.provider.BaseColumns;
 
 /**
  * Created by abdularis on 04/12/17.
+ *
+ * Database contract class for pending task
  */
 
 class TaskDatabaseContract {

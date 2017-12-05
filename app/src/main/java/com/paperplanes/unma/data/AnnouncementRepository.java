@@ -1,6 +1,5 @@
 package com.paperplanes.unma.data;
 
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -21,11 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import io.reactivex.*;
-import io.reactivex.functions.Action;
-import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 
 public class AnnouncementRepository {

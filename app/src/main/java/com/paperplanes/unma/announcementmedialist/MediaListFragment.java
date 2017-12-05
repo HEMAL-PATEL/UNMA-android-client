@@ -16,13 +16,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.github.lzyzsd.circleprogress.CircleProgress;
 import com.paperplanes.unma.App;
 import com.paperplanes.unma.R;
-import com.paperplanes.unma.announcementdetail.AnnouncementDetailActivity;
 import com.paperplanes.unma.common.AppUtil;
 import com.paperplanes.unma.common.ErrorUtil;
 import com.paperplanes.unma.common.FileUtil;
@@ -198,7 +196,7 @@ public class MediaListFragment extends Fragment implements MediaAdapter.OnClickL
         public void onDownloadFailed(Announcement announcement) {
             mMediaAdapter.notifyItemChanged(announcement);
             Toast.makeText(getActivity(),
-                    "Failed to download " + announcement.getAttachment().getName(),
+                    getString(R.string.text_download_failed) + announcement.getAttachment().getName(),
                     Toast.LENGTH_SHORT).show();
         }
 

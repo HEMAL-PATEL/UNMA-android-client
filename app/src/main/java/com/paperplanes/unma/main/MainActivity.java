@@ -19,7 +19,6 @@ import android.widget.TextView;
 
 import com.paperplanes.unma.App;
 import com.paperplanes.unma.R;
-import com.paperplanes.unma.announcementdetail.AnnouncementDetailActivity;
 import com.paperplanes.unma.announcementlist.AnnouncementListFragment;
 import com.paperplanes.unma.announcementmedialist.MediaListFragment;
 import com.paperplanes.unma.auth.SessionManager;
@@ -171,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToAnnouncements() {
         mCurrentFragmentTag = TAG_FRAG_ANNOUNCEMENT_LIST;
-        mToolbar.setTitle(getString(R.string.app_name));
+        mToolbar.setTitle(R.string.app_name);
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
                 .replace(R.id.content_layout, mAnnouncementListFragment, TAG_FRAG_ANNOUNCEMENT_LIST)
@@ -180,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToMedia() {
         mCurrentFragmentTag = TAG_FRAG_MEDIA_LIST;
-        mToolbar.setTitle("Attachment Files");
+        mToolbar.setTitle(R.string.title_attachment_files);
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
                 .replace(R.id.content_layout, mMediaListFragment, TAG_FRAG_MEDIA_LIST)
