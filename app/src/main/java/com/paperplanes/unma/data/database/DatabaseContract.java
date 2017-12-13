@@ -12,7 +12,6 @@ public final class DatabaseContract {
         public static final String TABLE_NAME = "announcements";
 
         public static final String TITLE = "title";
-        public static final String THUMBNAIL_URL = "thumb_url";
         public static final String PUBLISHER = "publisher";
         public static final String LAST_UPDATED = "last_updated";
         public static final String READ = "read";
@@ -20,6 +19,7 @@ public final class DatabaseContract {
         public static final String DESC_URL = "desc_url";
         public static final String DESC_CONTENT = "desc_content";
         public static final String DESC_SIZE = "desc_size";
+        public static final String DESC_AVAILABLE_OFFLINE = "desc_offline";
 
         public static final String ATT_URL = "att_url";
         public static final String ATT_FILE_PATH = "att_file_path";

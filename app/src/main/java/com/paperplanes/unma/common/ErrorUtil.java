@@ -3,6 +3,7 @@ package com.paperplanes.unma.common;
 import android.content.Context;
 
 import com.paperplanes.unma.R;
+import com.paperplanes.unma.common.exceptions.HandledRuntimeError;
 import com.paperplanes.unma.common.exceptions.NoConnectivityException;
 
 import java.net.SocketException;
@@ -18,6 +19,8 @@ public final class ErrorUtil {
             return context.getResources().getString(R.string.err_no_connectivity);
         } else if (throwable instanceof SocketException) {
             return context.getResources().getString(R.string.err_cant_connect);
+        } else if (throwable instanceof HandledRuntimeError) {
+            return throwable.getMessage();
         }
         return context.getResources().getString(R.string.err_unknown);
     }

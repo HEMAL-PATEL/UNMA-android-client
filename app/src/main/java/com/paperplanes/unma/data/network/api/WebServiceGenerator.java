@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class WebServiceGenerator {
 
-    private static final String BASE_API_URL = "http://192.168.0.102:8000/api/";
+    private static final String BASE_API_URL = "http://abdularis.pythonanywhere.com/api/";
 
     private Retrofit mRetrofit;
 

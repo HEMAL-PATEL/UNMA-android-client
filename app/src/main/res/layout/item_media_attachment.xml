@@ -14,10 +14,10 @@
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
+        android:src="@drawable/ic_file_unknown"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_file_unknown"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:id="@+id/attachment_filename"
@@ -54,7 +54,7 @@
         android:id="@+id/file_ext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:text="TextView"
         android:textSize="12sp"
@@ -65,7 +65,7 @@
         android:id="@+id/file_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
         android:text="TextView"
         android:textSize="12sp"
@@ -98,7 +98,7 @@
             android:layout_height="24dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_offline_pin"
-            android:tint="@color/color_unread"
+            android:tint="@color/avail_offline"
             android:visibility="gone"/>
 
         <com.github.lzyzsd.circleprogress.CircleProgress

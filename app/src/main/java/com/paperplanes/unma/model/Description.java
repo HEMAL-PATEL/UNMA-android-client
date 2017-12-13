@@ -12,15 +12,17 @@ public class Description {
     private String mUrl;
     private String mContent;
     private long mSize;
+    private boolean mOffline;
 
     public Description() {
-        this(null, "", 0);
+        this(null, "", 0, false);
     }
 
-    public Description(String url, String content, long size) {
+    public Description(String url, String content, long size, boolean offline) {
         mUrl = url;
         mContent = content;
         mSize = size;
+        mOffline = offline;
     }
 
     public String getUrl() {
@@ -45,5 +47,13 @@ public class Description {
 
     public void setSize(long size) {
         mSize = size;
+    }
+
+    public boolean isOffline() {
+        return mOffline;
+    }
+
+    public void setOffline(boolean offline) {
+        mOffline = offline;
     }
 }

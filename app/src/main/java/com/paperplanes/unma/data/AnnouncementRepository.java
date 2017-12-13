@@ -85,7 +85,10 @@ public class AnnouncementRepository {
                                 .downloadDescription(ann.getDescription().getUrl())
                                 .map(responseBody -> {
                                     ann.getDescription().setContent(responseBody.string());
+                                    ann.getDescription().setOffline(true);
                                     mDatabaseAccess.updateDescriptionContent(ann.getId(), ann.getDescription().getContent());
+                                    mStore.notifySingularObserver(ann.getId());
+                                    mStore.notifyObjectListObserver();
                                     return ann;
                                 });
                     }
@@ -204,7 +207,6 @@ public class AnnouncementRepository {
         Announcement announcement = new Announcement();
         announcement.setId(resp.getId());
         announcement.setTitle(resp.getTitle());
-        announcement.setThumbnailUrl(resp.getThumbnailUrl());
         announcement.setLastUpdated(new Date((long) (resp.getLastUpdated() * 1000L)));
         announcement.setPublisher(resp.getPublisher());
         announcement.setRead(resp.isRead());
@@ -214,6 +216,7 @@ public class AnnouncementRepository {
             desc.setUrl(resp.getDescription().getUrl());
             desc.setContent(resp.getDescription().getContent());
             desc.setSize(resp.getDescription().getSize());
+            desc.setOffline(desc.getContent() != null);
             announcement.setDescription(desc);
         }
 

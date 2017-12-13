@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DateBoxView">
+        <attr name="dayBackgroundColor" format="color"/>
+        <attr name="dayBackground" format="reference"/>
+        <attr name="dayTextColor" format="color"/>
+        <attr name="dayTextSize" format="dimension"/>
+        <attr name="dayWidth" format="dimension"/>
+        <attr name="dayHeight" format="dimension"/>
+        <attr name="dayPadding" format="dimension"/>
+        <attr name="dayPaddingTop" format="dimension"/>
+        <attr name="dayPaddingBottom" format="dimension"/>
+        <attr name="dayPaddingLeft" format="dimension"/>
+        <attr name="dayPaddingRight" format="dimension"/>
+
+        <attr name="yearBackgroundColor" format="color"/>
+        <attr name="yearBackground" format="reference"/>
+        <attr name="yearTextColor" format="color"/>
+        <attr name="yearTextSize" format="dimension"/>
+        <attr name="yearWidth" format="dimension"/>
+        <attr name="yearHeight" format="dimension"/>
+        <attr name="yearPadding" format="dimension"/>
+        <attr name="yearPaddingTop" format="dimension"/>
+        <attr name="yearPaddingBottom" format="dimension"/>
+        <attr name="yearPaddingLeft" format="dimension"/>
+        <attr name="yearPaddingRight" format="dimension"/>
+    </declare-styleable>
+</resources>

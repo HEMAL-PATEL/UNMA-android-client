@@ -1,22 +1,26 @@
 package com.paperplanes.unma.announcementlist;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.github.abdularis.dateview.DateBoxView;
 import com.paperplanes.unma.R;
+import com.paperplanes.unma.common.FileUtil;
 import com.paperplanes.unma.model.Announcement;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import abdularis.github.com.materialcolorrandomizer.MaterialColorRandom;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.annotations.NonNull;
@@ -25,41 +29,97 @@ import io.reactivex.annotations.NonNull;
  * Created by abdularis on 13/11/17.
  */
 
-public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapter.ViewHolder> {
+public class AnnouncementAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final int ITEM_DATA = 1;
+    private static final int ITEM_HEADER_UNREAD = 2;
+    private static final int ITEM_HEADER_READ = 3;
 
     private Context mContext;
-    private List<Announcement> mAnnouncements;
     private OnItemClickListener mClickListener;
 
+    private List<Object> mDataList = new ArrayList<>();
+
+    private MaterialColorRandom mColorRandom;
+
     AnnouncementAdapter(@NonNull Context context) {
-        mAnnouncements = new ArrayList<>();
         mContext = context;
+        mColorRandom = MaterialColorRandom.getInstance(context);
     }
 
     void replaceAll(@NonNull List<Announcement> announcements) {
         if (announcements.isEmpty())
             return;
-        mAnnouncements.clear();
-        mAnnouncements.addAll(announcements);
+
+        ArrayList<Object> unread = new ArrayList<>();
+        ArrayList<Object> read = new ArrayList<>();
+
+        for (Announcement announcement : announcements) {
+            if (announcement.isRead()) read.add(announcement);
+            else unread.add(announcement);
+        }
+
+        mDataList.clear();
+        if (!unread.isEmpty()) {
+            mDataList.add(new UnreadHeader(unread.size()));
+            mDataList.addAll(unread);
+        }
+
+        if (!read.isEmpty()) {
+            mDataList.add(new ReadHeader(read.size()));
+            mDataList.addAll(read);
+        }
+
         notifyDataSetChanged();
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.item_announcement, viewGroup, false);
-        return new ViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+        View view;
+        switch (viewType) {
+            case ITEM_HEADER_UNREAD:
+                view = inflater.inflate(R.layout.item_announcement_header_unread, viewGroup, false);
+                return new ViewHolderUnreadHeader(view);
+            case ITEM_HEADER_READ:
+                view = inflater.inflate(R.layout.item_announcement_header_read, viewGroup, false);
+                return new ViewHolderReadHeader(view);
+        }
+
+        view = inflater.inflate(R.layout.item_announcement, viewGroup, false);
+        return new ViewHolderAnnouncement(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int i) {
-        Announcement ann = mAnnouncements.get(i);
-        viewHolder.bindData(ann);
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
+        switch (viewHolder.getItemViewType()) {
+            case ITEM_DATA:
+                ViewHolderAnnouncement viewHolderAnnouncementAnnouncement = (ViewHolderAnnouncement) viewHolder;
+                viewHolderAnnouncementAnnouncement.bindData((Announcement) mDataList.get(i));
+                break;
+            case ITEM_HEADER_UNREAD:
+                ViewHolderUnreadHeader viewHolderUnread = (ViewHolderUnreadHeader) viewHolder;
+                viewHolderUnread.bindData((UnreadHeader) mDataList.get(i));
+                break;
+            case ITEM_HEADER_READ:
+                ViewHolderReadHeader viewHolderRead = (ViewHolderReadHeader) viewHolder;
+                viewHolderRead.bindData((ReadHeader) mDataList.get(i));
+                break;
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (mDataList.get(position) instanceof Announcement)
+            return ITEM_DATA;
+        else if (mDataList.get(position) instanceof ReadHeader)
+            return ITEM_HEADER_READ;
+        return ITEM_HEADER_UNREAD;
     }
 
     @Override
     public int getItemCount() {
-        return mAnnouncements.size();
+        return mDataList.size();
     }
 
     void setOnClickListener(OnItemClickListener clickListener) {
@@ -76,17 +136,59 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
         void onClick(View itemView, Announcement announcement);
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class UnreadHeader {
+        UnreadHeader(int unreadCount) {
+            this.unreadCount = unreadCount;
+        }
+        int unreadCount;
+    }
+
+    class ReadHeader {
+        ReadHeader(int readCount) {
+            this.readCount = readCount;
+        }
+        int readCount;
+    }
+
+    class ViewHolderUnreadHeader extends RecyclerView.ViewHolder {
+        @BindView(R.id.unread_count) TextView unreadCount;
+        ViewHolderUnreadHeader(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+
+        void bindData(UnreadHeader unreadHeader) {
+            unreadCount.setText(String.valueOf(unreadHeader.unreadCount));
+        }
+    }
+
+    class ViewHolderReadHeader extends RecyclerView.ViewHolder {
+        @BindView(R.id.read_count) TextView readCount;
+        ViewHolderReadHeader(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+
+        void bindData(ReadHeader readHeader) {
+            readCount.setText(String.valueOf(readHeader.readCount));
+        }
+    }
+
+    class ViewHolderAnnouncement extends RecyclerView.ViewHolder {
+        private final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm", Locale.US);
+        private final SimpleDateFormat DATE_FORMAT_FOR_COLOR_ID = new SimpleDateFormat("dd-MM", Locale.US);
+
         @BindView(R.id.anc_title) TextView title;
         @BindView(R.id.publisher) TextView publisher;
-        @BindView(R.id.date) TextView date;
-        @BindView(R.id.unread_indicator) ImageView unreadIndicator;
-        @BindView(R.id.thumbnail) ImageView imageView;
+        @BindView(R.id.date) TextView time;
         @BindView(R.id.attachment_indicator) ImageView attachIndicator;
+        @BindView(R.id.date_box) DateBoxView dateBox;
+        @BindView(R.id.description_summary) TextView descSummary;
+        @BindView(R.id.description_avail_offline) ImageView descOffline;
 
         private Announcement mCurrentAnn;
 
-        ViewHolder(View itemView) {
+        ViewHolderAnnouncement(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(v -> callClickListener(v, mCurrentAnn));
@@ -97,21 +199,27 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
 
             title.setText(ann.getTitle());
             publisher.setText(ann.getPublisher());
-            String tm = (String) DateUtils.getRelativeDateTimeString(mContext,
-                    ann.getLastUpdated().getTime(),
-                    DateUtils.DAY_IN_MILLIS,
-                    DateUtils.DAY_IN_MILLIS,
-                    DateUtils.FORMAT_24HOUR);
-            date.setText(tm);
+            dateBox.setDate(ann.getLastUpdated());
+            time.setText(TIME_FORMAT.format(ann.getLastUpdated()));
 
-            if (ann.getThumbnailUrl() != null) {
-                Glide.with(mContext)
-                        .load(ann.getThumbnailUrl())
-                        .error(R.drawable.ic_no_content)
-                        .into(imageView);
+            Resources res = mContext.getResources();
+
+            if (ann.getDescription() != null) {
+                String summary = res.getString(R.string.description) + " " +
+                        FileUtil.getFormattedFileSize(ann.getDescription().getSize());
+                descSummary.setText(summary);
+                descSummary.setTextColor(res.getColor(R.color.sub_text));
+
+                if (ann.getDescription().isOffline()) {
+                    descOffline.setVisibility(View.VISIBLE);
+                } else {
+                    descOffline.setVisibility(View.GONE);
+                }
             }
             else {
-                imageView.setImageResource(R.drawable.ic_no_content);
+                descSummary.setText(R.string.no_description);
+                descSummary.setTextColor(res.getColor(R.color.no_description_text));
+                descOffline.setVisibility(View.GONE);
             }
 
             if (ann.getAttachment() != null) {
@@ -122,96 +230,21 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
             }
 
             if (ann.isRead()) {
-                unreadIndicator.setVisibility(View.GONE);
-                date.setTextColor(mContext.getResources().getColor(android.R.color.darker_gray));
+                time.setTextColor(res.getColor(android.R.color.darker_gray));
+                time.setTypeface(null, Typeface.NORMAL);
                 title.setTypeface(null, Typeface.NORMAL);
             }
             else {
-                unreadIndicator.setVisibility(View.VISIBLE);
-                date.setTextColor(mContext.getResources().getColor(R.color.color_unread));
+                time.setTextColor(res.getColor(R.color.color_unread));
+                time.setTypeface(null, Typeface.BOLD);
                 title.setTypeface(null, Typeface.BOLD);
             }
+
+            String date = DATE_FORMAT_FOR_COLOR_ID.format(ann.getLastUpdated());
+            int color = mColorRandom.getRandomMaterialColor(date);
+            dateBox.setDayBgColor(color);
+            dateBox.setYearBgColor(MaterialColorRandom.getLightenedColor(color, 0.94f));
         }
     }
 
-//    class ViewHolder extends RecyclerView.ViewHolder {
-//        @BindView(R.id.anc_title) TextView title;
-//        @BindView(R.id.publisher) TextView publisher;
-//        @BindView(R.id.date) TextView date;
-//        @BindView(R.id.attachment_layout) LinearLayout attachmentLayout;
-//        @BindView(R.id.attachment_filename) TextView attachmentFilename;
-//        @BindView(R.id.file_type_image) ImageView fileTypeImage;
-//        @BindView(R.id.unread_indicator) ImageView unreadIndicator;
-//        @BindView(R.id.file_ext) TextView fileExt;
-//        @BindView(R.id.file_size) TextView fileSize;
-//        @BindView(R.id.thumbnail) RoundedImageView imageView;
-//        @BindView(R.id.thumbnail_layout) FrameLayout thumbLayout;
-//
-//        private Announcement mCurrentAnn;
-//
-//        ViewHolder(View itemView) {
-//            super(itemView);
-//            ButterKnife.bind(this, itemView);
-//            itemView.setOnClickListener(v -> callClickListener(v, mCurrentAnn));
-//        }
-//
-//        void bindData(Announcement ann) {
-//            mCurrentAnn = ann;
-//
-//            title.setText(ann.getTitle());
-//            publisher.setText(ann.getPublisher());
-//            String tm = (String) DateUtils.getRelativeDateTimeString(mContext,
-//                    ann.getLastUpdated().getTime(),
-//                    DateUtils.DAY_IN_MILLIS,
-//                    DateUtils.DAY_IN_MILLIS,
-//                    DateUtils.FORMAT_24HOUR);
-//            date.setText(tm);
-//
-//            if (ann.getThumbnailUrl() != null) {
-//                Log.d("DownloadThumb", ann.getThumbnailUrl());
-//                thumbLayout.setVisibility(View.VISIBLE);
-//                Glide.with(mContext)
-//                        .load(ann.getThumbnailUrl())
-//                        .listener(new RequestListener<String, GlideDrawable>() {
-//                            @Override
-//                            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-//                                Log.d("AnnouncementAdapter", e.toString());
-//                                thumbLayout.setVisibility(View.GONE);
-//                                return false;
-//                            }
-//
-//                            @Override
-//                            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-//                                return false;
-//                            }
-//                        })
-//                        .into(imageView);
-//            }
-//            else {
-//                thumbLayout.setVisibility(View.GONE);
-//            }
-//
-//            if (ann.isRead()) {
-//                unreadIndicator.setVisibility(View.GONE);
-//                date.setTextColor(mContext.getResources().getColor(android.R.color.darker_gray));
-//                title.setTypeface(null, Typeface.NORMAL);
-//            }
-//            else {
-//                unreadIndicator.setVisibility(View.VISIBLE);
-//                date.setTextColor(mContext.getResources().getColor(R.color.color_unread));
-//                title.setTypeface(null, Typeface.BOLD);
-//            }
-//
-//            Attachment attach = ann.getAttachment();
-//            if (attach != null) {
-//                attachmentLayout.setVisibility(View.VISIBLE);
-//                attachmentFilename.setText(attach.getName());
-//                fileTypeImage.setImageResource(FileUtil.getDrawableResourceForFileExt(attach.getName()));
-//                fileSize.setText(FileUtil.getFormattedFileSize(attach.getSize()));
-//                fileExt.setText(FileUtil.getFileExtension(attach.getName()));
-//            } else {
-//                attachmentLayout.setVisibility(View.GONE);
-//            }
-//        }
-//    }
 }

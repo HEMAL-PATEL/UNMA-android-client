@@ -4,10 +4,8 @@ import android.app.Application;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
-import com.bumptech.glide.load.model.GlideUrl;
 import com.paperplanes.unma.auth.SessionManager;
 import com.paperplanes.unma.data.AnnouncementRepository;
 import com.paperplanes.unma.di.components.AppComponent;
@@ -16,12 +14,11 @@ import com.paperplanes.unma.di.modules.AppModule;
 import com.paperplanes.unma.infrastructure.NetworkStateChangeListener;
 import com.paperplanes.unma.login.LoginActivity;
 
-import java.io.InputStream;
-
 import javax.inject.Inject;
 
+import abdularis.github.com.materialcolorrandomizer.MaterialColorRandom;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import okhttp3.OkHttpClient;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by abdularis on 02/11/17.
@@ -33,9 +30,6 @@ public class App extends Application {
 
     @Inject
     SessionManager mSessionManager;
-
-    @Inject
-    OkHttpClient mOkHttpClient;
 
     @Inject
     AnnouncementRepository mAnnouncementRepository;
@@ -56,10 +50,16 @@ public class App extends Application {
                     Intent i = new Intent(App.this, LoginActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(i);
+
+                    Toast.makeText(App.this, "Network Unauthorized", Toast.LENGTH_SHORT).show();
                 }
         );
 
-        Glide.get(this).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(mOkHttpClient));
+        // clear saved material color
+        mSessionManager.observeOnLogout(
+                AndroidSchedulers.mainThread(),
+                logoutEvent -> MaterialColorRandom.getInstance(App.this).clearColors()
+        );
 
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(new NetworkStateChangeListener(mAnnouncementRepository), intentFilter);

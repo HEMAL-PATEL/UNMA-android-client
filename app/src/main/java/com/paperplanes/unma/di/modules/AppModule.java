@@ -30,6 +30,11 @@ import com.paperplanes.unma.data.pendingtask.TaskDatabaseHelper;
 import com.paperplanes.unma.login.LoginViewModel;
 import com.paperplanes.unma.main.MainViewModel;
 import com.paperplanes.unma.model.Announcement;
+import com.paperplanes.unma.data.network.api.ProfileApi;
+import com.paperplanes.unma.profiledetail.ProfileDetailViewModel;
+import com.paperplanes.unma.data.ProfileRepository;
+import com.paperplanes.unma.data.SharedPreferencesProfileStore;
+import com.paperplanes.unma.profileupdate.ProfileUpdateViewModel;
 
 import javax.inject.Singleton;
 
@@ -102,6 +107,12 @@ public class AppModule {
 
     @Provides
     @Singleton
+    ProfileApi provideProfileApi(WebServiceGenerator webServiceGenerator) {
+        return webServiceGenerator.createService(ProfileApi.class);
+    }
+
+    @Provides
+    @Singleton
     DatabaseAccess provideDatabaseAccess(Context context) {
         return new DatabaseAccess(new DatabaseHelper(context));
     }
@@ -136,6 +147,12 @@ public class AppModule {
 
     @Provides
     @Singleton
+    ProfileRepository provideProfileRepository(ProfileApi profileApi, Context context) {
+        return new ProfileRepository(profileApi, new SharedPreferencesProfileStore(context));
+    }
+
+    @Provides
+    @Singleton
     ResourceProvider provideResourceProvider(Context context) {
         return new ResourceProvider(context);
     }
@@ -161,6 +178,16 @@ public class AppModule {
     AnnouncementListViewModel provideAnnouncementListViewModel(AnnouncementRepository repository,
                                                                SessionManager sessionManager) {
         return new AnnouncementListViewModel(repository, sessionManager);
+    }
+
+    @Provides
+    ProfileDetailViewModel provideProfileDetailViewModel(ProfileRepository repository, SessionManager sessionManager) {
+        return new ProfileDetailViewModel(repository, sessionManager);
+    }
+
+    @Provides
+    ProfileUpdateViewModel provideProfileUpdateViewModel(ResourceProvider resourceProvider, ProfileRepository repository, SessionManager sessionManager) {
+        return new ProfileUpdateViewModel(resourceProvider, repository, sessionManager);
     }
 
     @Provides

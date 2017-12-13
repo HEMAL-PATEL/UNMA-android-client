@@ -10,7 +10,6 @@ public class AnnouncementRespData {
 
     @SerializedName("id") String mId;
     @SerializedName("title") String mTitle;
-    @SerializedName("thumbnail") String mThumbnailUrl;
     @SerializedName("description") Description mDescription;
     @SerializedName("publisher") String mPublisher;
     @SerializedName("last_updated") double mLastUpdated;
@@ -23,10 +22,6 @@ public class AnnouncementRespData {
 
     public String getTitle() {
         return mTitle;
-    }
-
-    public String getThumbnailUrl() {
-        return mThumbnailUrl;
     }
 
     public Description getDescription() {

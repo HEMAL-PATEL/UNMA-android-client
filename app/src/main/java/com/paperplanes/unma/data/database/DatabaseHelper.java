@@ -17,7 +17,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + DatabaseContract.Announcement.TABLE_NAME + "(" +
                     DatabaseContract.Announcement._ID + " TEXT PRIMARY KEY," +
                     DatabaseContract.Announcement.TITLE + " TEXT," +
-                    DatabaseContract.Announcement.THUMBNAIL_URL + " TEXT," +
                     DatabaseContract.Announcement.PUBLISHER + " TEXT," +
                     DatabaseContract.Announcement.LAST_UPDATED + " INTEGER," +
                     DatabaseContract.Announcement.READ + " BOOLEAN," +
@@ -25,6 +24,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     DatabaseContract.Announcement.DESC_URL + " TEXT," +
                     DatabaseContract.Announcement.DESC_CONTENT + " TEXT," +
                     DatabaseContract.Announcement.DESC_SIZE + " INTEGER," +
+                    DatabaseContract.Announcement.DESC_AVAILABLE_OFFLINE + " TEXT," +
 
                     DatabaseContract.Announcement.ATT_URL + " TEXT," +
                     DatabaseContract.Announcement.ATT_FILE_PATH + " TEXT," +

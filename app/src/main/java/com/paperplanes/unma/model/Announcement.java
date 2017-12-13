@@ -12,7 +12,6 @@ public class Announcement {
 
     private String mId;
     private String mTitle;
-    private String mThumbnailUrl;
     private Description mDescription;
     private String mPublisher;
     private Date mLastUpdated;
@@ -24,7 +23,6 @@ public class Announcement {
 
     public Announcement(String id,
                         String title,
-                        String thumbnailUrl,
                         Description description,
                         String publisher,
                         Date lastUpdated,
@@ -32,7 +30,6 @@ public class Announcement {
                         boolean read) {
         mId = id;
         mTitle = title;
-        mThumbnailUrl = thumbnailUrl;
         mDescription = description;
         mPublisher = publisher;
         mLastUpdated = lastUpdated;
@@ -65,14 +62,6 @@ public class Announcement {
 
     public void setTitle(String title) {
         mTitle = title;
-    }
-
-    public String getThumbnailUrl() {
-        return mThumbnailUrl;
-    }
-
-    public void setThumbnailUrl(String thumbnailUrl) {
-        mThumbnailUrl = thumbnailUrl;
     }
 
     public Description getDescription() {

@@ -10,6 +10,8 @@ import com.paperplanes.unma.di.modules.AppModule;
 import com.paperplanes.unma.login.LoginActivity;
 import com.paperplanes.unma.main.MainActivity;
 import com.paperplanes.unma.announcementmedialist.MediaListFragment;
+import com.paperplanes.unma.profiledetail.ProfileDetailFragment;
+import com.paperplanes.unma.profileupdate.ProfileUpdateActivity;
 
 import javax.inject.Singleton;
 
@@ -31,7 +33,11 @@ public interface AppComponent {
 
     void inject(MediaListFragment client);
 
+    void inject(ProfileDetailFragment client);
+
     void inject(AnnouncementDetailActivity client);
+
+    void inject(ProfileUpdateActivity client);
 
     void inject(MainActivity client);
 

@@ -28,7 +28,6 @@ public class DatabaseAccess {
     static {
         sProjs.add(DatabaseContract.Announcement._ID);
         sProjs.add(DatabaseContract.Announcement.TITLE);
-        sProjs.add(DatabaseContract.Announcement.THUMBNAIL_URL);
         sProjs.add(DatabaseContract.Announcement.PUBLISHER);
         sProjs.add(DatabaseContract.Announcement.LAST_UPDATED);
         sProjs.add(DatabaseContract.Announcement.READ);
@@ -36,6 +35,7 @@ public class DatabaseAccess {
         sProjs.add(DatabaseContract.Announcement.DESC_URL);
 //        sProjs.add(DatabaseContract.Announcement.DESC_CONTENT); // load later, when needed
         sProjs.add(DatabaseContract.Announcement.DESC_SIZE);
+        sProjs.add(DatabaseContract.Announcement.DESC_AVAILABLE_OFFLINE);
 
         sProjs.add(DatabaseContract.Announcement.ATT_URL);
         sProjs.add(DatabaseContract.Announcement.ATT_FILE_PATH);
@@ -85,14 +85,14 @@ public class DatabaseAccess {
             description = new Description(
                     descUrl,
                     null,
-                    c.getLong(sProjs.indexOf(DatabaseContract.Announcement.DESC_SIZE))
+                    c.getLong(sProjs.indexOf(DatabaseContract.Announcement.DESC_SIZE)),
+                    Boolean.valueOf(c.getString(sProjs.indexOf(DatabaseContract.Announcement.DESC_AVAILABLE_OFFLINE)))
             );
         }
 
         return new Announcement(
                 c.getString(sProjs.indexOf(DatabaseContract.Announcement._ID)),
                 c.getString(sProjs.indexOf(DatabaseContract.Announcement.TITLE)),
-                c.getString(sProjs.indexOf(DatabaseContract.Announcement.THUMBNAIL_URL)),
                 description,
                 c.getString(sProjs.indexOf(DatabaseContract.Announcement.PUBLISHER)),
                 new Date(c.getLong(sProjs.indexOf(DatabaseContract.Announcement.LAST_UPDATED))),
@@ -149,7 +149,6 @@ public class DatabaseAccess {
         ContentValues vals = new ContentValues();
         vals.put(DatabaseContract.Announcement._ID, ann.getId());
         vals.put(DatabaseContract.Announcement.TITLE, ann.getTitle());
-        vals.put(DatabaseContract.Announcement.THUMBNAIL_URL, ann.getThumbnailUrl());
         vals.put(DatabaseContract.Announcement.PUBLISHER, ann.getPublisher());
         vals.put(DatabaseContract.Announcement.LAST_UPDATED, ann.getLastUpdated().getTime());
         vals.put(DatabaseContract.Announcement.READ, Boolean.valueOf(ann.isRead()).toString());
@@ -159,6 +158,7 @@ public class DatabaseAccess {
             vals.put(DatabaseContract.Announcement.DESC_URL, desc.getUrl());
             vals.put(DatabaseContract.Announcement.DESC_CONTENT, desc.getContent());
             vals.put(DatabaseContract.Announcement.DESC_SIZE, desc.getSize());
+            vals.put(DatabaseContract.Announcement.DESC_AVAILABLE_OFFLINE, Boolean.valueOf(desc.isOffline()).toString());
         }
 
         Attachment att = ann.getAttachment();
@@ -198,7 +198,6 @@ public class DatabaseAccess {
             vals.clear();
             vals.put(DatabaseContract.Announcement._ID, ann.getId());
             vals.put(DatabaseContract.Announcement.TITLE, ann.getTitle());
-            vals.put(DatabaseContract.Announcement.THUMBNAIL_URL, ann.getThumbnailUrl());
             vals.put(DatabaseContract.Announcement.PUBLISHER, ann.getPublisher());
             vals.put(DatabaseContract.Announcement.LAST_UPDATED, ann.getLastUpdated().getTime());
             vals.put(DatabaseContract.Announcement.READ, Boolean.valueOf(ann.isRead()).toString());
@@ -208,6 +207,7 @@ public class DatabaseAccess {
                 vals.put(DatabaseContract.Announcement.DESC_URL, desc.getUrl());
                 vals.put(DatabaseContract.Announcement.DESC_CONTENT, desc.getContent());
                 vals.put(DatabaseContract.Announcement.DESC_SIZE, desc.getSize());
+                vals.put(DatabaseContract.Announcement.DESC_AVAILABLE_OFFLINE, Boolean.valueOf(desc.isOffline()).toString());
             }
 
             Attachment att = ann.getAttachment();
@@ -242,6 +242,7 @@ public class DatabaseAccess {
     public void updateDescriptionContent(@NonNull String announcementId, String descContent) {
         ContentValues vals = new ContentValues();
         vals.put(DatabaseContract.Announcement.DESC_CONTENT, descContent);
+        vals.put(DatabaseContract.Announcement.DESC_AVAILABLE_OFFLINE, Boolean.valueOf(true).toString());
 
         String where = DatabaseContract.Announcement._ID + "=?";
         String whereArg[] = {announcementId};

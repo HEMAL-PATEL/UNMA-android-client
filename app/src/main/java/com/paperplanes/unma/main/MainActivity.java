@@ -24,6 +24,7 @@ import com.paperplanes.unma.announcementmedialist.MediaListFragment;
 import com.paperplanes.unma.auth.SessionManager;
 import com.paperplanes.unma.common.ErrorUtil;
 import com.paperplanes.unma.login.LoginActivity;
+import com.paperplanes.unma.profiledetail.ProfileDetailFragment;
 import com.paperplanes.unma.settings.AboutActivity;
 
 import javax.inject.Inject;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG_FRAG_ANNOUNCEMENT_LIST = "ANNOUNCEMENT_LIST";
     private static final String TAG_FRAG_MEDIA_LIST = "MEDIA_LIST";
+    private static final String TAG_FRAG_PROFILE_DETAIL = "PROFILE_DETAIL";
 
     private String mCurrentFragmentTag;
 
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AnnouncementListFragment mAnnouncementListFragment;
     private MediaListFragment mMediaListFragment;
+    private ProfileDetailFragment mProfileDetailFragment;
 
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
@@ -73,10 +76,16 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             mCurrentFragmentTag = savedInstanceState.getString(STATE_CURRENT_FRAGMENT, TAG_FRAG_ANNOUNCEMENT_LIST);
             int menuId;
-            if (mCurrentFragmentTag.equals(TAG_FRAG_MEDIA_LIST)) {
-                menuId = R.id.menu_media;
-            } else {
-                menuId = R.id.menu_announcements;
+            switch (mCurrentFragmentTag) {
+                case TAG_FRAG_MEDIA_LIST:
+                    menuId = R.id.menu_media;
+                    break;
+                case TAG_FRAG_PROFILE_DETAIL:
+                    menuId = R.id.menu_profile;
+                    break;
+                default:
+                    menuId = R.id.menu_announcements;
+                    break;
             }
 
             selectNavigationItem(mNavigationView.getMenu().findItem(menuId));
@@ -89,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
     private void initFragments() {
         mMediaListFragment = new MediaListFragment();
         mAnnouncementListFragment = new AnnouncementListFragment();
+        mProfileDetailFragment = new ProfileDetailFragment();
     }
 
     private void initViewModel() {
@@ -149,6 +159,10 @@ public class MainActivity extends AppCompatActivity {
                 item.setChecked(true);
                 goToMedia();
                 break;
+            case R.id.menu_profile:
+                item.setChecked(true);
+                goToProfileDetail();
+                break;
             case R.id.menu_settings:
                 goToSettings();
                 break;
@@ -183,6 +197,15 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
                 .replace(R.id.content_layout, mMediaListFragment, TAG_FRAG_MEDIA_LIST)
+                .commit();
+    }
+
+    private void goToProfileDetail() {
+        mCurrentFragmentTag = TAG_FRAG_PROFILE_DETAIL;
+        mToolbar.setTitle("Profile");
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction()
+                .replace(R.id.content_layout, mProfileDetailFragment, TAG_FRAG_PROFILE_DETAIL)
                 .commit();
     }
 

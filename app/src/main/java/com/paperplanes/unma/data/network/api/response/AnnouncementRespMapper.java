@@ -18,7 +18,6 @@ public class AnnouncementRespMapper implements Function<AnnouncementRespData, An
         Announcement announcement = new Announcement();
         announcement.setId(resp.getId());
         announcement.setTitle(resp.getTitle());
-        announcement.setThumbnailUrl(resp.getThumbnailUrl());
         announcement.setLastUpdated(new Date((long) (resp.getLastUpdated() * 1000L)));
         announcement.setPublisher(resp.getPublisher());
         announcement.setRead(resp.isRead());

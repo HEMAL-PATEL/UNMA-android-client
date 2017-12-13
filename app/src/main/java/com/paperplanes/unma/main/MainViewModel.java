@@ -43,9 +43,8 @@ public class MainViewModel extends ViewModel {
                 .subscribe(new DisposableSingleObserver<Boolean>() {
                     @Override
                     public void onSuccess(Boolean success) {
-                        if (success) {
+                        if (success)
                             mRepository.clearAll();
-                        }
                         mLogoutResult.setValue(success);
                     }
 

@@ -110,7 +110,7 @@
                     android:id="@+id/offline_pin"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:tint="@color/color_unread"
+                    android:tint="@color/avail_offline"
                     android:src="@drawable/ic_offline_pin"/>
                 <com.github.lzyzsd.circleprogress.CircleProgress
                     android:id="@+id/download_progress"

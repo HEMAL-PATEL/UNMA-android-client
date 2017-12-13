@@ -1,87 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="horizontal"
     android:background="@drawable/bg_announcement_item">
 
-    <ImageView
-        android:id="@+id/thumbnail"
-        android:layout_width="70dp"
-        android:layout_height="0dp"
+    <com.github.abdularis.dateview.DateBoxView
+        android:id="@+id/date_box"
+        android:layout_width="45dp"
+        android:layout_height="55dp"
         android:layout_marginBottom="16dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:scaleType="matrix"
-        android:src="@drawable/ic_no_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:dayTextColor="@android:color/white"
+        app:dayTextSize="18dp"
+        app:yearPadding="3dp"
+        app:yearTextColor="@color/date_box_year_text"
+        app:yearTextSize="10sp"/>
 
-    <TextView
-        android:id="@+id/anc_title"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:text="TextView"
-        android:textColor="@color/anc_title"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/attachment_indicator"
-        app:layout_constraintStart_toEndOf="@+id/thumbnail"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <TextView
-        android:id="@+id/publisher"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_marginBottom="16dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="TextView"
-        android:textColor="#767676"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/thumbnail"
-        app:layout_constraintTop_toBottomOf="@+id/anc_title"/>
-
-    <TextView
-        android:id="@+id/date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp"
-        android:text="TextView"
-        android:textColor="#767676"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/anc_title"/>
+        android:layout_marginTop="16dp">
 
-    <ImageView
-        android:id="@+id/unread_indicator"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/date"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_unread_indicator"/>
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/attachment_indicator"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/date"
-        app:layout_constraintEnd_toStartOf="@+id/unread_indicator"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_attachment"/>
+            <!--<ImageView-->
+                <!--android:id="@+id/unread_indicator"-->
+                <!--android:layout_width="10dp"-->
+                <!--android:layout_height="10dp"-->
+                <!--android:layout_marginEnd="8dp"-->
+                <!--app:layout_constraintBottom_toBottomOf="parent"-->
+                <!--app:layout_constraintEnd_toEndOf="parent"-->
+                <!--app:layout_constraintTop_toTopOf="parent"-->
+                <!--app:srcCompat="@drawable/ic_unread_indicator"/>-->
 
-</android.support.constraint.ConstraintLayout>
+            <ImageView
+                android:id="@+id/attachment_indicator"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                app:srcCompat="@drawable/ic_attachment"/>
+
+            <TextView
+                android:id="@+id/anc_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:text="TextView"
+                android:textColor="@color/anc_title"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@+id/attachment_indicator"
+                app:layout_constraintStart_toStartOf="parent"/>
+        </android.support.constraint.ConstraintLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/publisher"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TextView"
+                android:textSize="13sp"
+                android:textColor="@color/sub_text"/>
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textSize="13sp"
+                android:textColor="@color/sub_text"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/description_summary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:textColor="@color/no_description_text"
+                android:text="@string/no_description"/>
+            <ImageView
+                android:id="@+id/description_avail_offline"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="6dp"
+                android:src="@drawable/ic_offline_pin"
+                android:tint="@color/sub_text"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

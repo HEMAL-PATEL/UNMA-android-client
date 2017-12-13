@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#D32F2F</color>
-    <color name="colorPrimaryDark">#B71C1C</color>
+    <color name="colorPrimary">#E53935</color>
+    <color name="colorPrimaryDark">#C62828</color>
     <color name="colorAccent">#1CB7B7</color>
     <color name="colorTextError">#d94545</color>
-    <color name="color_unread">#09D261</color>
+    <color name="color_unread">#4285f4</color>
     <color name="anc_title">#222222</color>
+    <color name="avail_offline">#09D261</color>
+
+    <color name="date_box_day_bg">#f1f1f1</color>
+    <color name="date_box_day_text">#3b3b3b</color>
+    <color name="date_box_year_bg">#fafafa</color>
+    <color name="date_box_year_text">#696969</color>
+
+    <color name="date_box_day_bg_unread">#4285f4</color>
+    <color name="date_box_day_text_unread">#f9f9f9</color>
+    <color name="date_box_year_bg_unread">#f2f5fa</color>
+    <color name="date_box_year_text_unread">#1e2d45</color>
+
+    <color name="no_description_text">#e1e1e1</color>
+    <color name="sub_text">#b4b4b4</color>
 </resources>

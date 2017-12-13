@@ -60,7 +60,6 @@ public class DatabaseAccessTest {
         list.add(new Announcement(
                 "id-sd8fs9fhs9ds9fhs",
                 "This is title",
-                "http://localhost",
                 null,
                 "pub",
                 new Date(),
@@ -70,8 +69,7 @@ public class DatabaseAccessTest {
         list.add(new Announcement(
                 "id-a9s8dfuasksjdf98d",
                 "This is title",
-                "http://localhost",
-                new Description("http://localhost", "content", 100),
+                new Description("http://localhost", "content", 100, false),
                 "pub",
                 new Date(),
                 new Attachment("http://localhost", "path/home/file.pdf", "file.pdf", "app/pdf", 1000),
