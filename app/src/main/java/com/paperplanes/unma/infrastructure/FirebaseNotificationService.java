@@ -1,5 +1,6 @@
 package com.paperplanes.unma.infrastructure;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -26,10 +27,18 @@ import io.reactivex.observers.DisposableCompletableObserver;
 
 /**
  * Created by abdularis on 16/11/17.
+ *
+ * This class will receive a firebase message sent by backend server
+ * we don't send our notification using data field in the firebase request
+ * so onMessageReceived() method always get called, and we do things manually
+ * notifikasi kita buat secara manual sesuai kondisi is app in the foreground or not
  */
 
 public class FirebaseNotificationService extends FirebaseMessagingService {
     private static final String TAG = FirebaseNotificationService.class.getSimpleName();
+
+    private static final String REMOTE_DATA_KEY_ANNOUNCEMENT_ID = "id";
+    private static final String REMOTE_DATA_KEY_ANNOUNCEMENT_TITLE = "title";
 
     @Inject
     AnnouncementRepository mAnnouncementRepository;
@@ -65,26 +74,51 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
 
         String packageName = this.getPackageName();
         if (!AppUtil.isAppInForeground(this, packageName)) {
-
-            Intent openAnnouncementDetailIntent = new Intent(this, AnnouncementDetailActivity.class);
-            openAnnouncementDetailIntent.putExtra(AnnouncementDetailActivity.EXTRA_ANNOUNCEMENT_ID, data.get("id"));
-            PendingIntent pendingIntent =
-                    PendingIntent.getActivity(this, 0,
-                            openAnnouncementDetailIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            NotificationCompat.Builder notifBuilder =
-                    new NotificationCompat.Builder(this)
-                            .setContentIntent(pendingIntent)
-                            .setSmallIcon(R.drawable.ic_notification)
-                            .setContentTitle("Pemberitahuan")
-                            .setContentText(data.get("title"))
-                            .setAutoCancel(true);
-
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationManager notificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             if (notificationManager != null) {
                 Log.d(TAG, "Showing notification");
-                notificationManager.notify(0, notifBuilder.build());
+
+                Notification notification = buildNotification(data);
+                notificationManager.notify(data.get(REMOTE_DATA_KEY_ANNOUNCEMENT_ID), 0, notification);
             }
         }
+    }
+
+    private Notification buildNotification(Map<String, String> data) {
+        String announcementId = data.get(REMOTE_DATA_KEY_ANNOUNCEMENT_ID);
+        String announcementTitle = data.get(REMOTE_DATA_KEY_ANNOUNCEMENT_TITLE);
+        String notifTitle = getString(R.string.notification_title);
+        String notifTicker = notifTitle + ": " + announcementTitle;
+        if (announcementTitle.length() > 96)
+            notifTicker = notifTitle + ": " + announcementTitle.substring(0, 96) + "...";
+
+        NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
+        bigTextStyle.setBigContentTitle(notifTitle);
+        bigTextStyle.bigText(announcementTitle);
+
+        NotificationCompat.Builder notifBuilder =
+                new NotificationCompat.Builder(this)
+                        .setContentIntent(createNotificationPendingIntent(announcementId))
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setContentTitle(notifTitle)
+                        .setContentText(announcementTitle)
+                        .setTicker(notifTicker)
+                        .setAutoCancel(true)
+                        .setDefaults(NotificationCompat.DEFAULT_ALL)
+                        .setStyle(bigTextStyle);
+
+        return notifBuilder.build();
+    }
+
+    private PendingIntent createNotificationPendingIntent(String announcementId) {
+        Intent openAnnouncementDetailIntent = new Intent(this, AnnouncementDetailActivity.class);
+        openAnnouncementDetailIntent.putExtra(AnnouncementDetailActivity.EXTRA_ANNOUNCEMENT_ID, announcementId);
+        return PendingIntent.getActivity(
+                this,
+                0,
+                openAnnouncementDetailIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }

@@ -47,4 +47,5 @@
     <string name="description">Deskripsi</string>
     <string name="update_password_empty_error"><![CDATA[Masukan password lama & baru]]></string>
     <string name="update_password_same_pass"><![CDATA[Password lama & baru harus berbeda]]></string>
+    <string name="notification_title">UNMA Inbox</string>
 </resources>
