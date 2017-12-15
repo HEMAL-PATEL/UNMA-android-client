@@ -12,11 +12,15 @@ import android.widget.TextView;
 
 import com.github.abdularis.dateview.DateBoxView;
 import com.paperplanes.unma.R;
+import com.paperplanes.unma.common.DateUtil;
 import com.paperplanes.unma.common.FileUtil;
 import com.paperplanes.unma.model.Announcement;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -34,6 +38,7 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int ITEM_DATA = 1;
     private static final int ITEM_HEADER_UNREAD = 2;
     private static final int ITEM_HEADER_READ = 3;
+    private static final int ITEM_HEADER_READ_TODAY = 4;
 
     private Context mContext;
     private OnItemClickListener mClickListener;
@@ -53,16 +58,30 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         ArrayList<Object> unread = new ArrayList<>();
         ArrayList<Object> read = new ArrayList<>();
+        ArrayList<Object> readToday = new ArrayList<>();
 
+        Date todayDate = new Date();
         for (Announcement announcement : announcements) {
-            if (announcement.isRead()) read.add(announcement);
-            else unread.add(announcement);
+            if (announcement.isRead()) {
+                if (DateUtil.isSameDay(todayDate, announcement.getLastUpdated()))
+                    readToday.add(announcement);
+                else
+                    read.add(announcement);
+            }
+            else {
+                unread.add(announcement);
+            }
         }
 
         mDataList.clear();
         if (!unread.isEmpty()) {
             mDataList.add(new UnreadHeader(unread.size()));
             mDataList.addAll(unread);
+        }
+
+        if (!readToday.isEmpty()) {
+            mDataList.add(new ReadTodayHeader(readToday.size(), new SimpleDateFormat("dd MMM", Locale.US).format(todayDate)));
+            mDataList.addAll(readToday);
         }
 
         if (!read.isEmpty()) {
@@ -84,6 +103,9 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case ITEM_HEADER_READ:
                 view = inflater.inflate(R.layout.item_announcement_header_read, viewGroup, false);
                 return new ViewHolderReadHeader(view);
+            case ITEM_HEADER_READ_TODAY:
+                view = inflater.inflate(R.layout.item_announcement_header_read_today, viewGroup, false);
+                return new ViewHolderReadTodayHeader(view);
         }
 
         view = inflater.inflate(R.layout.item_announcement, viewGroup, false);
@@ -105,6 +127,9 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 ViewHolderReadHeader viewHolderRead = (ViewHolderReadHeader) viewHolder;
                 viewHolderRead.bindData((ReadHeader) mDataList.get(i));
                 break;
+            case ITEM_HEADER_READ_TODAY:
+                ViewHolderReadTodayHeader viewHolderReadTodayHeader = (ViewHolderReadTodayHeader) viewHolder;
+                viewHolderReadTodayHeader.bindData((ReadTodayHeader) mDataList.get(i));
         }
     }
 
@@ -112,6 +137,8 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public int getItemViewType(int position) {
         if (mDataList.get(position) instanceof Announcement)
             return ITEM_DATA;
+        else if (mDataList.get(position) instanceof ReadTodayHeader)
+            return ITEM_HEADER_READ_TODAY;
         else if (mDataList.get(position) instanceof ReadHeader)
             return ITEM_HEADER_READ;
         return ITEM_HEADER_UNREAD;
@@ -150,6 +177,14 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         int readCount;
     }
 
+    class ReadTodayHeader extends ReadHeader {
+        ReadTodayHeader(int readCount, String date) {
+            super(readCount);
+            this.date = date;
+        }
+        String date;
+    }
+
     class ViewHolderUnreadHeader extends RecyclerView.ViewHolder {
         @BindView(R.id.unread_count) TextView unreadCount;
         ViewHolderUnreadHeader(View itemView) {
@@ -171,6 +206,20 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         void bindData(ReadHeader readHeader) {
             readCount.setText(String.valueOf(readHeader.readCount));
+        }
+    }
+
+    class ViewHolderReadTodayHeader extends RecyclerView.ViewHolder {
+        @BindView(R.id.read_count) TextView readCount;
+        @BindView(R.id.date) TextView date;
+        ViewHolderReadTodayHeader(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+
+        void bindData(ReadTodayHeader readTodayHeader) {
+            readCount.setText(String.valueOf(readTodayHeader.readCount));
+            date.setText(readTodayHeader.date);
         }
     }
 
