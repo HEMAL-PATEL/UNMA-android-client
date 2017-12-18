@@ -26,6 +26,7 @@ import com.paperplanes.unma.common.ErrorUtil;
 import com.paperplanes.unma.login.LoginActivity;
 import com.paperplanes.unma.profiledetail.ProfileDetailFragment;
 import com.paperplanes.unma.settings.AboutActivity;
+import com.paperplanes.unma.settings.SettingsActivity;
 
 import javax.inject.Inject;
 
@@ -210,7 +211,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void goToSettings() {
-        // TODO implement settings menu
+        Intent i = new Intent(this, SettingsActivity.class);
+        startActivity(i);
     }
 
     private void goToAbout() {

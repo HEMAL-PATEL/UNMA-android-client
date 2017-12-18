@@ -5,11 +5,14 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -19,6 +22,7 @@ import com.paperplanes.unma.announcementdetail.AnnouncementDetailActivity;
 import com.paperplanes.unma.common.AppUtil;
 import com.paperplanes.unma.data.AnnouncementRepository;
 
+import java.net.URL;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -55,10 +59,6 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
 
         Map<String, String> data = remoteMessage.getData();
 
-        Uri notif = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Ringtone ringtone = RingtoneManager.getRingtone(this, notif);
-        ringtone.play();
-
         mAnnouncementRepository.fetchAnnouncements()
                 .subscribe(new DisposableCompletableObserver() {
                     @Override
@@ -83,6 +83,10 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
                 notificationManager.notify(data.get(REMOTE_DATA_KEY_ANNOUNCEMENT_ID), 0, notification);
             }
         }
+        else {
+            Ringtone ringtone = RingtoneManager.getRingtone(this, getInAppNotificationSoundUri());
+            ringtone.play();
+        }
     }
 
     private Notification buildNotification(Map<String, String> data) {
@@ -106,7 +110,7 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
                         .setContentText(announcementTitle)
                         .setTicker(notifTicker)
                         .setAutoCancel(true)
-                        .setDefaults(NotificationCompat.DEFAULT_ALL)
+                        .setSound(getNotificationSoundUri())
                         .setStyle(bigTextStyle);
 
         return notifBuilder.build();
@@ -120,5 +124,22 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
                 0,
                 openAnnouncementDetailIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private Uri getNotificationSoundUri() {
+        return getSoundUriFromPreferences(getString(R.string.pref_notification_sound));
+    }
+
+    private Uri getInAppNotificationSoundUri() {
+        return getSoundUriFromPreferences(getString(R.string.pref_in_app_notification_sound));
+    }
+
+    private Uri getSoundUriFromPreferences(String prefName) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String soundUri = prefs.getString(prefName, null);
+        Log.d(TAG, soundUri);
+        if (soundUri != null)
+            return Uri.parse(soundUri);
+        return RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
     }
 }

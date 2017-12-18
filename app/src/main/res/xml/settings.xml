@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="Notifications">
+        <RingtonePreference
+            android:key="@string/pref_notification_sound"
+            android:title="Notification Sound"
+            android:ringtoneType="notification"
+            android:showSilent="false"/>
+
+        <RingtonePreference
+            android:key="@string/pref_in_app_notification_sound"
+            android:title="In App Notification Sound"
+            android:ringtoneType="notification"
+            android:showSilent="false"/>
+    </PreferenceCategory>
+</PreferenceScreen>
