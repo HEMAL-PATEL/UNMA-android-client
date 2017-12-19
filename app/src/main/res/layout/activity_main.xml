@@ -19,15 +19,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-        <android.support.design.widget.CoordinatorLayout
-            android:id="@+id/content_layout"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbarLayout">
-        </android.support.design.widget.CoordinatorLayout>
+            <include
+                layout="@layout/partial_in_app_notification"/>
+            <android.support.design.widget.CoordinatorLayout
+                android:id="@+id/content_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </android.support.design.widget.CoordinatorLayout>
+        </LinearLayout>
 
         <View
             android:id="@+id/view"

@@ -3,6 +3,8 @@ package com.paperplanes.unma.di.modules;
 import android.app.Application;
 import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 
 import com.paperplanes.unma.ResourceProvider;
 import com.paperplanes.unma.ViewModelFactory;
@@ -27,6 +29,8 @@ import com.paperplanes.unma.auth.Authentication;
 import com.paperplanes.unma.AndroidSessionManager;
 import com.paperplanes.unma.data.pendingtask.MarkReadTaskDatabase;
 import com.paperplanes.unma.data.pendingtask.TaskDatabaseHelper;
+import com.paperplanes.unma.infrastructure.DeviceConnectivityObserver;
+import com.paperplanes.unma.infrastructure.PendingTaskConnectivityListener;
 import com.paperplanes.unma.login.LoginViewModel;
 import com.paperplanes.unma.main.MainViewModel;
 import com.paperplanes.unma.model.Announcement;
@@ -59,6 +63,17 @@ public class AppModule {
     @Singleton
     Context provideContext() {
         return mApplication;
+    }
+
+    @Provides
+    @Singleton
+    DeviceConnectivityObserver provideDeviceConnectivityObserver(Context appContext,
+                                                                 AnnouncementRepository repository) {
+        DeviceConnectivityObserver observer = new DeviceConnectivityObserver();
+        observer.addConnectivityStateChangeListener(new PendingTaskConnectivityListener(repository));
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        appContext.registerReceiver(observer, intentFilter);
+        return observer;
     }
 
     @Provides

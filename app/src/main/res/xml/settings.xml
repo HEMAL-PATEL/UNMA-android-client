@@ -13,5 +13,10 @@
             android:title="In App Notification Sound"
             android:ringtoneType="notification"
             android:showSilent="false"/>
+
+        <CheckBoxPreference
+            android:key="@string/pref_vibrate"
+            android:title="Vibrate"
+            android:defaultValue="false"/>
     </PreferenceCategory>
 </PreferenceScreen>

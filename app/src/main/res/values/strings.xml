@@ -52,4 +52,8 @@
 
     <string name="pref_notification_sound">pref_notification_sound</string>
     <string name="pref_in_app_notification_sound">pref_in_app_notification_sound</string>
+    <string name="pref_vibrate">Vibrate</string>
+
+    <string name="in_app_notif_no_connectivity">Tidak ada konektivitas jaringan :(</string>
+    <string name="in_app_auto_refresh_notif">Mengambil data baru dari server</string>
 </resources>

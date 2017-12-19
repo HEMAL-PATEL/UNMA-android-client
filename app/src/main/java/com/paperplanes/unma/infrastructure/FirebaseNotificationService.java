@@ -11,8 +11,8 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -20,9 +20,9 @@ import com.paperplanes.unma.App;
 import com.paperplanes.unma.R;
 import com.paperplanes.unma.announcementdetail.AnnouncementDetailActivity;
 import com.paperplanes.unma.common.AppUtil;
+import com.paperplanes.unma.common.FileUtil;
 import com.paperplanes.unma.data.AnnouncementRepository;
 
-import java.net.URL;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -43,14 +43,25 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
 
     private static final String REMOTE_DATA_KEY_ANNOUNCEMENT_ID = "id";
     private static final String REMOTE_DATA_KEY_ANNOUNCEMENT_TITLE = "title";
+    private static final String REMOTE_DATA_KEY_DESCRIPTION_SIZE = "desc_size";
+    private static final String REMOTE_DATA_KEY_ATTACHMENT = "attachment";
+
+    public static final String IN_APP_NOTIFICATION_RECEIVED_ACTION = "IN_APP_NOTIF_RECEIVED";
+    public static final String OPERATION_NAME_EXTRA = "OPERATION_NAME_EXTRA";
+    public static final String OPERATION_FETCHING_DATA = "FETCHING_DATA";
+    public static final String OPERATION_DATA_FETCHED = "DATA_FETCHED";
+    public static final String OPERATION_FETCH_ERROR = "FETCH_ERROR";
+
 
     @Inject
     AnnouncementRepository mAnnouncementRepository;
+    LocalBroadcastManager mBroadcastManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
         ((App) getApplication()).getAppComponent().inject(this);
+        mBroadcastManager = LocalBroadcastManager.getInstance(this);
     }
 
     @Override
@@ -64,11 +75,13 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
                     @Override
                     public void onComplete() {
                         Log.d(TAG, "Data fetched");
+                        sendLocalBroadcast(OPERATION_DATA_FETCHED);
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
                         Log.d(TAG, "Failed to fetch data: " + throwable.toString());
+                        sendLocalBroadcast(OPERATION_FETCH_ERROR);
                     }
                 });
 
@@ -84,9 +97,18 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
             }
         }
         else {
+            sendLocalBroadcast(OPERATION_FETCHING_DATA);
+
             Ringtone ringtone = RingtoneManager.getRingtone(this, getInAppNotificationSoundUri());
             ringtone.play();
         }
+    }
+
+    private void sendLocalBroadcast(String operationname) {
+        Intent intent = new Intent();
+        intent.setAction(IN_APP_NOTIFICATION_RECEIVED_ACTION);
+        intent.putExtra(OPERATION_NAME_EXTRA, operationname);
+        mBroadcastManager.sendBroadcast(intent);
     }
 
     private Notification buildNotification(Map<String, String> data) {
@@ -96,10 +118,24 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
         String notifTicker = notifTitle + ": " + announcementTitle;
         if (announcementTitle.length() > 96)
             notifTicker = notifTitle + ": " + announcementTitle.substring(0, 96) + "...";
+        String descSize = "Tidak ada deskripsi";
+        if (data.get(REMOTE_DATA_KEY_DESCRIPTION_SIZE) != null) {
+            descSize = "Deskripsi " +
+                    FileUtil.getFormattedFileSize(Long.valueOf(data.get(REMOTE_DATA_KEY_DESCRIPTION_SIZE)));
+        }
+
+        String attachment = null;
+        if (data.get(REMOTE_DATA_KEY_ATTACHMENT) != null) {
+            attachment = "File: " + data.get(REMOTE_DATA_KEY_ATTACHMENT);
+        }
+
+        String summary = descSize;
+        if (attachment != null) summary += ", " + attachment;
 
         NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
         bigTextStyle.setBigContentTitle(notifTitle);
         bigTextStyle.bigText(announcementTitle);
+        bigTextStyle.setSummaryText(summary);
 
         NotificationCompat.Builder notifBuilder =
                 new NotificationCompat.Builder(this)
@@ -112,6 +148,8 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
                         .setAutoCancel(true)
                         .setSound(getNotificationSoundUri())
                         .setStyle(bigTextStyle);
+        if (isVibrationOn())
+            notifBuilder.setVibrate(new long[]{0, 200, 200, 500, 200, 100});
 
         return notifBuilder.build();
     }
@@ -137,9 +175,13 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
     private Uri getSoundUriFromPreferences(String prefName) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String soundUri = prefs.getString(prefName, null);
-        Log.d(TAG, soundUri);
         if (soundUri != null)
             return Uri.parse(soundUri);
         return RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+    }
+
+    private boolean isVibrationOn() {
+        return PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(getString(R.string.pref_vibrate), false);
     }
 }

@@ -1,13 +1,19 @@
 package com.paperplanes.unma.main;
 
+import android.app.NotificationManager;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,6 +21,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.paperplanes.unma.App;
@@ -23,6 +31,9 @@ import com.paperplanes.unma.announcementlist.AnnouncementListFragment;
 import com.paperplanes.unma.announcementmedialist.MediaListFragment;
 import com.paperplanes.unma.auth.SessionManager;
 import com.paperplanes.unma.common.ErrorUtil;
+import com.paperplanes.unma.common.NetworkUtil;
+import com.paperplanes.unma.infrastructure.DeviceConnectivityObserver;
+import com.paperplanes.unma.infrastructure.FirebaseNotificationService;
 import com.paperplanes.unma.login.LoginActivity;
 import com.paperplanes.unma.profiledetail.ProfileDetailFragment;
 import com.paperplanes.unma.settings.AboutActivity;
@@ -33,7 +44,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DeviceConnectivityObserver.ConnectivityStateChangeListener {
 
     private static final String STATE_CURRENT_FRAGMENT = "CURRENT_FRAGMENT";
 
@@ -48,8 +59,14 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
     @BindView(R.id.nav_view) NavigationView mNavigationView;
 
+    @BindView(R.id.in_app_notif_layout) ConstraintLayout mInAppNotifLayout;
+    @BindView(R.id.ia_notif_text) TextView mInAppNotifText;
+    @BindView(R.id.ia_notif_icon) ImageView mInAppNotifIcon;
+
     @Inject
     SessionManager mSessionManager;
+    @Inject
+    DeviceConnectivityObserver mConnectivityObserver;
 
     private ActionBarDrawerToggle mDrawerToggle;
 
@@ -60,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
     MainViewModel mViewModel;
+
+    InAppNotificationReceivedListener broadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +113,50 @@ public class MainActivity extends AppCompatActivity {
         else {
             selectNavigationItem(mNavigationView.getMenu().getItem(0));
         }
+
+        mConnectivityObserver.addConnectivityStateChangeListener(this);
+
+        broadcastReceiver = new InAppNotificationReceivedListener();
+        IntentFilter intentFilter = new IntentFilter(FirebaseNotificationService.IN_APP_NOTIFICATION_RECEIVED_ACTION);
+        LocalBroadcastManager
+                .getInstance(getApplicationContext())
+                .registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (NetworkUtil.isOnline(getApplicationContext())) {
+            onDeviceOnline();
+        } else {
+            onDeviceOffline();
+        }
+
+        NotificationManager notifManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notifManager != null) {
+            // removes all shown notifications
+            notifManager.cancelAll();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager
+                .getInstance(getApplicationContext())
+                .unregisterReceiver(broadcastReceiver);
+    }
+
+    @Override
+    public void onDeviceOnline() {
+        mInAppNotifLayout.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onDeviceOffline() {
+        mInAppNotifLayout.setVisibility(View.VISIBLE);
+        mInAppNotifText.setText(R.string.in_app_notif_no_connectivity);
     }
 
     private void initFragments() {
@@ -232,5 +295,27 @@ public class MainActivity extends AppCompatActivity {
                 ErrorUtil.getErrorStringForThrowable(this, throwable),
                 Snackbar.LENGTH_LONG)
                 .show();
+    }
+
+    private class InAppNotificationReceivedListener extends BroadcastReceiver {
+        Snackbar mSnackbar;
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (FirebaseNotificationService.IN_APP_NOTIFICATION_RECEIVED_ACTION.equals(intent.getAction())) {
+                String operationName = intent.getStringExtra(FirebaseNotificationService.OPERATION_NAME_EXTRA);
+                switch (operationName) {
+                    case FirebaseNotificationService.OPERATION_FETCHING_DATA:
+                        mSnackbar = Snackbar.make(
+                                mSnackbarContainer,
+                                R.string.in_app_auto_refresh_notif,
+                                Snackbar.LENGTH_INDEFINITE);
+                        mSnackbar.show();
+                        break;
+                    default:
+                        if (mSnackbar != null) mSnackbar.dismiss();
+                }
+            }
+        }
     }
 }

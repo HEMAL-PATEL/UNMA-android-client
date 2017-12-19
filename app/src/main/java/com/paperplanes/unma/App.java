@@ -2,23 +2,18 @@ package com.paperplanes.unma;
 
 import android.app.Application;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
 import android.widget.Toast;
 
 import com.paperplanes.unma.auth.SessionManager;
-import com.paperplanes.unma.data.AnnouncementRepository;
 import com.paperplanes.unma.di.components.AppComponent;
 import com.paperplanes.unma.di.components.DaggerAppComponent;
 import com.paperplanes.unma.di.modules.AppModule;
-import com.paperplanes.unma.infrastructure.NetworkStateChangeListener;
 import com.paperplanes.unma.login.LoginActivity;
 
 import javax.inject.Inject;
 
 import abdularis.github.com.materialcolorrandomizer.MaterialColorRandom;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 
 /**
  * Created by abdularis on 02/11/17.
@@ -30,9 +25,6 @@ public class App extends Application {
 
     @Inject
     SessionManager mSessionManager;
-
-    @Inject
-    AnnouncementRepository mAnnouncementRepository;
 
     @Override
     public void onCreate() {
@@ -60,9 +52,6 @@ public class App extends Application {
                 AndroidSchedulers.mainThread(),
                 logoutEvent -> MaterialColorRandom.getInstance(App.this).clearColors()
         );
-
-        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(new NetworkStateChangeListener(mAnnouncementRepository), intentFilter);
     }
 
     public AppComponent getAppComponent() {
