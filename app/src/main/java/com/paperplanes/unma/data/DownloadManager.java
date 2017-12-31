@@ -74,6 +74,7 @@ public class DownloadManager {
         intentFilter.addAction(DownloadManagerService.ACTION_DOWNLOAD_PROGRESSED);
         intentFilter.addAction(DownloadManagerService.ACTION_DOWNLOAD_FAILED);
         intentFilter.addAction(DownloadManagerService.ACTION_DOWNLOAD_FINISHED);
+        intentFilter.addAction(DownloadManagerService.ACTION_DOWNLOAD_CONNECTING);
 
         LocalBroadcastManager.getInstance(mContext)
                 .registerReceiver(new DownloadBroadcastReceiver(), intentFilter);
@@ -93,6 +94,10 @@ public class DownloadManager {
 
     private void callDownloadFinished(Announcement announcement) {
         for (DownloadEventListener listener : mListenerList) listener.onDownloadFinished(announcement);
+    }
+
+    private void callDownloadConnecting(Announcement announcement) {
+        for (DownloadEventListener listener : mListenerList) listener.onDownloadConnecting(announcement);
     }
 
     private class DownloadBroadcastReceiver extends BroadcastReceiver {
@@ -115,7 +120,17 @@ public class DownloadManager {
                 case DownloadManagerService.ACTION_DOWNLOAD_FINISHED:
                     handleDownloadFinished(intent);
                     break;
+                case DownloadManagerService.ACTION_DOWNLOAD_CONNECTING:
+                    handleDownloadConnecting(intent);
+                    break;
             }
+        }
+
+        private void handleDownloadConnecting(Intent intent) {
+            String annId = intent.getStringExtra(DownloadManagerService.EXTRA_ANNOUNCEMENT_ID);
+            Announcement announcement = mAnnouncementMap.get(annId);
+            announcement.getAttachment().setState(Attachment.STATE_DOWNLOAD_CONNECTING);
+            callDownloadConnecting(mAnnouncementMap.get(annId));
         }
 
         private void handleDownloadStarted(Intent intent) {
@@ -158,5 +173,6 @@ public class DownloadManager {
         void onDownloadProgressed(Announcement announcement, int progress);
         void onDownloadFailed(Announcement announcement);
         void onDownloadFinished(Announcement announcement);
+        void onDownloadConnecting(Announcement announcement);
     }
 }

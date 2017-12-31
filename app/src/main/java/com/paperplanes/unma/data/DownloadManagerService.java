@@ -41,6 +41,7 @@ public class DownloadManagerService extends IntentService {
     public static final String ACTION_DOWNLOAD_STARTED = "DOWNLOAD_STARTED";
     public static final String ACTION_DOWNLOAD_FINISHED = "DOWNLOAD_FINISHED";
     public static final String ACTION_DOWNLOAD_FAILED = "DOWNLOAD_FAILED";
+    public static final String ACTION_DOWNLOAD_CONNECTING = "DOWNLOAD_CONNECTING";
 
     public static final String EXTRA_DOWNLOAD_REQUEST = "DOWNLOAD_REQUEST";
     public static final String EXTRA_ANNOUNCEMENT_ID = "ANNOUNCEMENT_ID";
@@ -137,8 +138,16 @@ public class DownloadManagerService extends IntentService {
         mBroadcastManager.sendBroadcast(intent);
     }
 
+    private void publishDownloadConnecting(AttachmentDownloadRequest request) {
+        Intent intent = new Intent();
+        intent.setAction(ACTION_DOWNLOAD_CONNECTING);
+        intent.putExtra(EXTRA_ANNOUNCEMENT_ID, request.getAnnouncementId());
+        mBroadcastManager.sendBroadcast(intent);
+    }
+
     private void download(AttachmentDownloadRequest request) {
         String announcementId = request.getAnnouncementId();
+        publishDownloadConnecting(request);
         mAnnouncementService.downloadAttachment(request.getAttachmentUrl())
                 .subscribeOn(Schedulers.newThread())
                 .subscribe(new DisposableSingleObserver<ResponseBody>() {
@@ -150,6 +159,7 @@ public class DownloadManagerService extends IntentService {
                         String folder = DownloadManager.ROOT_DOWNLOAD_DIR + File.separator + announcementId;
                         File dir = new File(folder);
                         if (!dir.exists() && !dir.mkdirs()) {
+                            publishDownloadFailed(request);
                             return;
                         }
                         File file = new File(dir, request.getAttachmentName() + ".temp");

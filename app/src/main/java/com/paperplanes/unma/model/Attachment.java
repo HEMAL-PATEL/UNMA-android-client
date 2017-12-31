@@ -9,6 +9,7 @@ public class Attachment {
     public static final int STATE_OFFLINE = 1;
     public static final int STATE_DOWNLOADING = 2;
     public static final int STATE_ONLINE = 3;
+    public static final int STATE_DOWNLOAD_CONNECTING = 4;
 
     private String mUrl;
     private String mFilePath;

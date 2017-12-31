@@ -284,4 +284,12 @@ public class AnnouncementDetailActivity extends AppCompatActivity implements Dow
         showDownloadFinish();
     }
 
+    @Override
+    public void onDownloadConnecting(Announcement announcement) {
+        Toast.makeText(
+                this,
+                "Connecting to download " + announcement.getAttachment().getName(),
+                Toast.LENGTH_SHORT).show();
+    }
+
 }

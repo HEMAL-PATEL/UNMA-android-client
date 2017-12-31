@@ -196,13 +196,21 @@ public class MediaListFragment extends Fragment implements MediaAdapter.OnClickL
         public void onDownloadFailed(Announcement announcement) {
             mMediaAdapter.notifyItemChanged(announcement);
             Toast.makeText(getActivity(),
-                    getString(R.string.text_download_failed) + announcement.getAttachment().getName(),
+                    getString(R.string.text_download_failed) + " " + announcement.getAttachment().getName(),
                     Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onDownloadFinished(Announcement announcement) {
             mMediaAdapter.notifyItemChanged(announcement);
+        }
+
+        @Override
+        public void onDownloadConnecting(Announcement announcement) {
+            Toast.makeText(
+                    getActivity(),
+                    "Connecting to download " + announcement.getAttachment().getName(),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 }
