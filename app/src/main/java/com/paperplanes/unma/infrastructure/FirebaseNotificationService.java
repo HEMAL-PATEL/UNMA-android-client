@@ -23,6 +23,7 @@ import com.paperplanes.unma.common.AppUtil;
 import com.paperplanes.unma.common.FileUtil;
 import com.paperplanes.unma.data.AnnouncementRepository;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -46,6 +47,9 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
     private static final String REMOTE_DATA_KEY_DESCRIPTION_SIZE = "desc_size";
     private static final String REMOTE_DATA_KEY_ATTACHMENT = "attachment";
 
+    public static final int NOTIFICATION_ID = 9876;
+    public static final ArrayList<String> NOTIFICATION_TAGS = new ArrayList<>();
+
     public static final String IN_APP_NOTIFICATION_RECEIVED_ACTION = "IN_APP_NOTIF_RECEIVED";
     public static final String OPERATION_NAME_EXTRA = "OPERATION_NAME_EXTRA";
     public static final String OPERATION_FETCHING_DATA = "FETCHING_DATA";
@@ -56,6 +60,17 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
     @Inject
     AnnouncementRepository mAnnouncementRepository;
     LocalBroadcastManager mBroadcastManager;
+
+    public static void cancelNotifications(Context context) {
+        NotificationManager notifManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notifManager != null) {
+            // removes all shown announcement notifications
+            for (String tag : NOTIFICATION_TAGS)
+                notifManager.cancel(tag, NOTIFICATION_ID);
+            NOTIFICATION_TAGS.clear();
+        }
+    }
 
     @Override
     public void onCreate() {
@@ -93,7 +108,8 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
                 Log.d(TAG, "Showing notification");
 
                 Notification notification = buildNotification(data);
-                notificationManager.notify(data.get(REMOTE_DATA_KEY_ANNOUNCEMENT_ID), 0, notification);
+                notificationManager.notify(data.get(REMOTE_DATA_KEY_ANNOUNCEMENT_ID), NOTIFICATION_ID, notification);
+                NOTIFICATION_TAGS.add(data.get(REMOTE_DATA_KEY_ANNOUNCEMENT_ID));
             }
         }
         else {

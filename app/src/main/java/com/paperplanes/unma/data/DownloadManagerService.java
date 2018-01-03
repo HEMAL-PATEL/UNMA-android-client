@@ -35,6 +35,8 @@ public class DownloadManagerService extends IntentService {
 
     private static final long PROGRESS_UPDATE_INTERVAL = 1000L;
 
+    public static final int NOTIFICATION_ID = 1234;
+
     public static final String ACTION_DOWNLOAD_ATTACHMENT = "DOWNLOAD_FILE";
 
     public static final String ACTION_DOWNLOAD_PROGRESSED = "DOWNLOAD_PROGRESSED";
@@ -67,7 +69,7 @@ public class DownloadManagerService extends IntentService {
                 .setAutoCancel(true);
         mNotifManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (mNotifManager != null) {
-            mNotifManager.cancel(0);
+            mNotifManager.cancel(NOTIFICATION_ID);
         }
         mBroadcastManager = LocalBroadcastManager.getInstance(this);
         ((App) getApplication()).getAppComponent().inject(this);
@@ -91,14 +93,14 @@ public class DownloadManagerService extends IntentService {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
-        mNotifManager.cancel(0);
+        mNotifManager.cancel(NOTIFICATION_ID);
     }
 
     private void publishDownloadProgress(AttachmentDownloadRequest request, int progress) {
         mNotifBuilder
                 .setProgress(100, progress, false)
                 .setContentText(progress + "%");
-        mNotifManager.notify(request.getAnnouncementId(), 0, mNotifBuilder.build());
+        mNotifManager.notify(request.getAnnouncementId(), NOTIFICATION_ID, mNotifBuilder.build());
 
         Intent intent = new Intent();
         intent.setAction(ACTION_DOWNLOAD_PROGRESSED);
@@ -111,7 +113,7 @@ public class DownloadManagerService extends IntentService {
         mNotifBuilder
                 .setProgress(100, 0, true)
                 .setContentTitle(request.getAttachmentName());
-        mNotifManager.notify(request.getAnnouncementId(), 0, mNotifBuilder.build());
+        mNotifManager.notify(request.getAnnouncementId(), NOTIFICATION_ID, mNotifBuilder.build());
 
         Intent intent = new Intent();
         intent.setAction(ACTION_DOWNLOAD_STARTED);
@@ -120,7 +122,7 @@ public class DownloadManagerService extends IntentService {
     }
 
     private void publishDownloadFailed(AttachmentDownloadRequest request) {
-        mNotifManager.cancel(request.getAnnouncementId(), 0);
+        mNotifManager.cancel(request.getAnnouncementId(), NOTIFICATION_ID);
 
         Intent intent = new Intent();
         intent.setAction(ACTION_DOWNLOAD_FAILED);
@@ -129,7 +131,7 @@ public class DownloadManagerService extends IntentService {
     }
 
     private void publishDownloadFinish(AttachmentDownloadRequest request, String filepath) {
-        mNotifManager.cancel(request.getAnnouncementId(), 0);
+        mNotifManager.cancel(request.getAnnouncementId(), NOTIFICATION_ID);
 
         Intent intent = new Intent();
         intent.setAction(ACTION_DOWNLOAD_FINISHED);

@@ -132,12 +132,7 @@ public class MainActivity extends AppCompatActivity implements DeviceConnectivit
             onDeviceOffline();
         }
 
-        NotificationManager notifManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (notifManager != null) {
-            // removes all shown notifications
-            notifManager.cancelAll();
-        }
+        FirebaseNotificationService.cancelNotifications(this);
     }
 
     @Override
