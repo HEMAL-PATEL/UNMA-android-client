@@ -239,7 +239,8 @@ public class AnnouncementRepository {
         if (attachment == null) return;
         if (attachment.getName() == null ||
                 attachment.getName().isEmpty() ||
-                attachment.getState() == Attachment.STATE_DOWNLOADING) return;
+                attachment.getState() == Attachment.STATE_DOWNLOADING ||
+                attachment.getState() == Attachment.STATE_DOWNLOAD_CONNECTING) return;
 
         String filepath = getAttachmentFilePath(announcement);
         if (FileUtil.isExists(filepath)) {
