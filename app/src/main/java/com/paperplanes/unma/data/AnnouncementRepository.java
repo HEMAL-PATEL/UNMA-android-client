@@ -74,7 +74,7 @@ public class AnnouncementRepository {
 
     public Single<Announcement> getDescriptionContent(@NonNull Announcement announcement) {
         return Single.just(announcement)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.computation())
                 .flatMap(ann -> {
                     // query from local database
                     String content = mDatabaseAccess.getDescriptionContent(ann.getId());
@@ -100,7 +100,7 @@ public class AnnouncementRepository {
 
     public Flowable<Optional<Announcement>> get(String id) {
         return mStore.getSingular(id)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.computation())
                 .flatMap(announcementOptional -> {
                     if (announcementOptional.isNull())
                         return Flowable.just(Optional.of(mDatabaseAccess.getAnnouncement(id)));
@@ -130,7 +130,7 @@ public class AnnouncementRepository {
 
     public Flowable<List<Announcement>> getAnnouncements() {
         return mStore.getAll()
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.computation())
                 .doOnNext(listOptional -> {
                     // if announcements is empty, try to query from local database
                     if (listOptional.isNotNull() && listOptional.get().isEmpty()) {
