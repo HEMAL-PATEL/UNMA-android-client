@@ -31,24 +31,9 @@
         android:text="TextView"
         android:textColor="@color/anc_title"
         android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/attachment_download"
+        app:layout_constraintEnd_toStartOf="@+id/btn_download"
         app:layout_constraintStart_toEndOf="@+id/file_type_image"
         app:layout_constraintTop_toTopOf="parent"/>
-
-    <!--<TextView-->
-        <!--android:id="@+id/anc_title"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginEnd="16dp"-->
-        <!--android:layout_marginStart="8dp"-->
-        <!--android:layout_marginTop="8dp"-->
-        <!--android:maxLines="1"-->
-        <!--android:ellipsize="end"-->
-        <!--android:text="TextView"-->
-        <!--android:textSize="12sp"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toEndOf="@+id/file_type_image"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/attachment_filename"/>-->
 
     <TextView
         android:id="@+id/file_ext"
@@ -72,43 +57,23 @@
         app:layout_constraintStart_toEndOf="@+id/file_ext"
         app:layout_constraintTop_toBottomOf="@+id/attachment_filename"/>
 
-    <FrameLayout
-        android:id="@+id/attachment_download"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <com.github.abdularis.buttonprogress.DownloadButtonProgress
+        android:id="@+id/btn_download"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
         android:layout_marginBottom="20dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageButton
-            android:id="@+id/download_btn"
-            android:layout_width="36dp"
-            android:layout_height="42dp"
-            android:layout_gravity="center"
-            android:background="@drawable/bg_announcement_item"
-            android:visibility="visible"
-            app:srcCompat="@drawable/ic_download"/>
-
-        <ImageView
-            android:id="@+id/offline_pin"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_offline_pin"
-            android:tint="@color/avail_offline"
-            android:visibility="gone"/>
-
-        <com.github.lzyzsd.circleprogress.CircleProgress
-            android:id="@+id/download_progress"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            app:circle_finished_color="@color/color_unread"
-            app:circle_text_size="12sp"/>
-    </FrameLayout>
+        app:layout_constraintTop_toTopOf="parent"
+        app:cancelable="false"
+        app:idleBackgroundColor="@android:color/transparent"
+        app:idleIconDrawable="@drawable/ic_download"
+        app:indeterminateBackgroundDrawable="@drawable/bg_btn_download"
+        app:progressIndeterminateColor="@color/colorAccent"
+        app:determinateBackgroundDrawable="@drawable/bg_btn_download"
+        app:progressDeterminateColor="@color/avail_offline"
+        app:finishBackgroundColor="@color/avail_offline"/>
 
 </android.support.constraint.ConstraintLayout>

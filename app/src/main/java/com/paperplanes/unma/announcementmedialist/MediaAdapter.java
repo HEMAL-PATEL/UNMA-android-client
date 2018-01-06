@@ -4,11 +4,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.github.lzyzsd.circleprogress.CircleProgress;
+import com.github.abdularis.buttonprogress.DownloadButtonProgress;
 import com.paperplanes.unma.R;
 import com.paperplanes.unma.common.FileUtil;
 import com.paperplanes.unma.model.Announcement;
@@ -92,9 +91,7 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
         @BindView(R.id.file_type_image) ImageView fileTypeImage;
         @BindView(R.id.file_ext) TextView fileExt;
         @BindView(R.id.file_size) TextView fileSize;
-        @BindView(R.id.download_btn) ImageButton downloadBtn;
-        @BindView(R.id.offline_pin) ImageView offlinePin;
-        @BindView(R.id.download_progress) CircleProgress downloadProgress;
+        @BindView(R.id.btn_download) DownloadButtonProgress mDownloadBtnProgress;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -105,9 +102,18 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
                     mClickListener.itemClicked(getAdapterPosition());
             });
             itemView.setOnLongClickListener(v -> mClickListener != null && mClickListener.itemLongClicked(getAdapterPosition()));
-            downloadBtn.setOnClickListener(v -> {
-                if (mClickListener != null)
-                    mClickListener.itemDownloadButtonClicked(getAdapterPosition());
+            mDownloadBtnProgress.addOnClickListener(new DownloadButtonProgress.OnClickListener() {
+                @Override
+                public void onIdleButtonClick(View view) {
+                    if (mClickListener != null)
+                        mClickListener.itemDownloadButtonClicked(getAdapterPosition());
+                }
+
+                @Override
+                public void onCancelButtonClick(View view) {} // doesn't need this!
+
+                @Override
+                public void onFinishButtonClick(View view) {} // doesn't need this!
             });
         }
 
@@ -122,17 +128,13 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
 
                 int state = announcement.getAttachment().getState();
                 if (state == Attachment.STATE_OFFLINE) {
-                    downloadBtn.setVisibility(View.GONE);
-                    downloadProgress.setVisibility(View.GONE);
-                    offlinePin.setVisibility(View.VISIBLE);
+                    mDownloadBtnProgress.setFinish();
+                } else if (state == Attachment.STATE_DOWNLOAD_CONNECTING) {
+                    mDownloadBtnProgress.setIndeterminate();
                 } else if (state == Attachment.STATE_DOWNLOADING) {
-                    downloadBtn.setVisibility(View.GONE);
-                    downloadProgress.setVisibility(View.VISIBLE);
-                    offlinePin.setVisibility(View.GONE);
+                    mDownloadBtnProgress.setDeterminate();
                 } else {
-                    downloadBtn.setVisibility(View.VISIBLE);
-                    downloadProgress.setVisibility(View.GONE);
-                    offlinePin.setVisibility(View.GONE);
+                    mDownloadBtnProgress.setIdle();
                 }
             }
         }

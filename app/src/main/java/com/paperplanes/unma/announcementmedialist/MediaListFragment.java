@@ -18,7 +18,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.github.lzyzsd.circleprogress.CircleProgress;
+import com.github.abdularis.buttonprogress.DownloadButtonProgress;
 import com.paperplanes.unma.App;
 import com.paperplanes.unma.R;
 import com.paperplanes.unma.common.AppUtil;
@@ -185,7 +185,7 @@ public class MediaListFragment extends Fragment implements MediaAdapter.OnClickL
         public void onDownloadProgressed(Announcement announcement, int progress) {
             View view = layoutManager.findViewByPosition(mMediaAdapter.getPosition(announcement));
             if (view != null) {
-                CircleProgress progressBar = view.findViewById(R.id.download_progress);
+                DownloadButtonProgress progressBar = view.findViewById(R.id.btn_download);
                 if (progressBar != null) {
                     progressBar.setProgress(progress);
                 }
@@ -207,10 +207,8 @@ public class MediaListFragment extends Fragment implements MediaAdapter.OnClickL
 
         @Override
         public void onDownloadConnecting(Announcement announcement) {
-            Toast.makeText(
-                    getActivity(),
-                    "Connecting to download " + announcement.getAttachment().getName(),
-                    Toast.LENGTH_SHORT).show();
+            mMediaAdapter.notifyItemChanged(announcement);
         }
+
     }
 }

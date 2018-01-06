@@ -18,13 +18,12 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.lzyzsd.circleprogress.CircleProgress;
+import com.github.abdularis.buttonprogress.DownloadButtonProgress;
 import com.paperplanes.unma.App;
 import com.paperplanes.unma.R;
 import com.paperplanes.unma.common.AppUtil;
@@ -52,9 +51,9 @@ public class AnnouncementDetailActivity extends AppCompatActivity implements Dow
     @BindView(R.id.file_type_image) ImageView mFileTypeImage;
     @BindView(R.id.file_ext) TextView mFileExt;
     @BindView(R.id.file_size) TextView mFileSize;
-    @BindView(R.id.download_progress) CircleProgress mDownloadProgress;
-    @BindView(R.id.offline_pin) ImageView mOfflinePin;
-    @BindView(R.id.download_btn) ImageButton mDownloadBtn;
+
+    @BindView(R.id.btn_download)
+    DownloadButtonProgress mDownloadBtnProgress;
 
     @BindView(R.id.anc_title) TextView mAncTitle;
     @BindView(R.id.publisher) TextView mAncPublisher;
@@ -74,6 +73,8 @@ public class AnnouncementDetailActivity extends AppCompatActivity implements Dow
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_announcement_detail);
         ButterKnife.bind(this);
+        initEmpty();
+
         ((App) getApplication()).getAppComponent().inject(this);
 
         String announcementId = null;
@@ -124,6 +125,19 @@ public class AnnouncementDetailActivity extends AppCompatActivity implements Dow
         settings.setLoadsImagesAutomatically(true);
 
         mViewModel.getDownloadManager().addDownloadEventListener(this);
+
+        mDownloadBtnProgress.addOnClickListener(new DownloadButtonProgress.OnClickListener() {
+            @Override
+            public void onIdleButtonClick(View view) {
+                onAttachmentClicked(view);
+            }
+
+            @Override
+            public void onCancelButtonClick(View view) {}
+
+            @Override
+            public void onFinishButtonClick(View view) {}
+        });
     }
 
     @Override
@@ -194,6 +208,8 @@ public class AnnouncementDetailActivity extends AppCompatActivity implements Dow
 
             if (attachment.getState() == Attachment.STATE_OFFLINE) {
                 showDownloadFinish();
+            } else if (attachment.getState() == Attachment.STATE_DOWNLOAD_CONNECTING) {
+                showDownloadConnecting();
             } else if (attachment.getState() == Attachment.STATE_DOWNLOADING) {
                 showDownloadProgress();
             } else {
@@ -205,27 +221,20 @@ public class AnnouncementDetailActivity extends AppCompatActivity implements Dow
         }
     }
 
-    @OnClick(R.id.download_btn)
-    public void onDownloadButtonClicked(View view) {
-        doDownloadAttachment();
+    private void showDownloadConnecting() {
+        mDownloadBtnProgress.setIndeterminate();
     }
 
     private void showDownloadProgress() {
-        mDownloadBtn.setVisibility(View.GONE);
-        mOfflinePin.setVisibility(View.GONE);
-        mDownloadProgress.setVisibility(View.VISIBLE);
+        mDownloadBtnProgress.setDeterminate();
     }
 
     private void showDownloadFinish() {
-        mDownloadBtn.setVisibility(View.GONE);
-        mOfflinePin.setVisibility(View.VISIBLE);
-        mDownloadProgress.setVisibility(View.GONE);
+        mDownloadBtnProgress.setFinish();
     }
 
     private void showDownloadButton() {
-        mDownloadBtn.setVisibility(View.VISIBLE);
-        mOfflinePin.setVisibility(View.GONE);
-        mDownloadProgress.setVisibility(View.GONE);
+        mDownloadBtnProgress.setIdle();
     }
 
     private void showDescriptionLoading(String text) {
@@ -244,6 +253,15 @@ public class AnnouncementDetailActivity extends AppCompatActivity implements Dow
         else {
             AppUtil.requestWritePermission(this);
         }
+    }
+
+    private void initEmpty() {
+        mAncTitle.setText("-");
+        mAncPublisher.setText("-");
+        mAncDate.setText("-");
+        mAttachmentFilename.setText("-");
+        mFileSize.setText("-");
+        mFileExt.setText("-");
     }
 
     @Override
@@ -267,7 +285,7 @@ public class AnnouncementDetailActivity extends AppCompatActivity implements Dow
 
     @Override
     public void onDownloadProgressed(Announcement announcement, int progress) {
-        mDownloadProgress.setProgress(progress);
+        mDownloadBtnProgress.setProgress(progress);
     }
 
     @Override
@@ -286,10 +304,7 @@ public class AnnouncementDetailActivity extends AppCompatActivity implements Dow
 
     @Override
     public void onDownloadConnecting(Announcement announcement) {
-        Toast.makeText(
-                this,
-                "Connecting to download " + announcement.getAttachment().getName(),
-                Toast.LENGTH_SHORT).show();
+        showDownloadConnecting();
     }
 
 }
