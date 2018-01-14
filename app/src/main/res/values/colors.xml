@@ -7,6 +7,7 @@
     <color name="color_unread">#4285f4</color>
     <color name="anc_title">#222222</color>
     <color name="avail_offline">#09D261</color>
+    <color name="progress_loading_color">#9ca4a9</color>
 
     <color name="date_box_day_bg">#f1f1f1</color>
     <color name="date_box_day_text">#3b3b3b</color>

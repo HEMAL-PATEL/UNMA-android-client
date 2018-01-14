@@ -92,8 +92,8 @@
 
             <com.github.abdularis.buttonprogress.DownloadButtonProgress
                 android:id="@+id/btn_download"
-                android:layout_width="42dp"
-                android:layout_height="42dp"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
                 android:layout_marginBottom="20dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="20dp"
@@ -101,12 +101,11 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:cancelable="false"
+                app:hideOnFinish="true"
                 app:idleBackgroundColor="#7b000000"
-                app:indeterminateBackgroundDrawable="@drawable/bg_btn_download"
-                app:progressIndeterminateColor="@color/colorAccent"
-                app:determinateBackgroundDrawable="@drawable/bg_btn_download"
-                app:progressDeterminateColor="@color/avail_offline"
-                app:finishBackgroundColor="@color/avail_offline"/>
+                app:progressIndeterminateColor="#bbc2c6"
+                app:progressIndeterminateSweepAngle="1"
+                app:progressDeterminateColor="@color/avail_offline"/>
 
             <TextView
                 android:id="@+id/file_ext"

@@ -68,10 +68,12 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:cancelable="false"
+        app:hideOnFinish="true"
         app:idleBackgroundColor="@android:color/transparent"
         app:idleIconDrawable="@drawable/ic_download"
         app:indeterminateBackgroundDrawable="@drawable/bg_btn_download"
-        app:progressIndeterminateColor="@color/colorAccent"
+        app:progressIndeterminateColor="@color/progress_loading_color"
+        app:progressIndeterminateSweepAngle="1"
         app:determinateBackgroundDrawable="@drawable/bg_btn_download"
         app:progressDeterminateColor="@color/avail_offline"
         app:finishBackgroundColor="@color/avail_offline"/>
