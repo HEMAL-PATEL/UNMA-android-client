@@ -21,7 +21,7 @@
     <string name="login_username">Npm</string>
     <string name="login_password">Password</string>
     <string name="login_login_text">Login</string>
-    <string name="no_data_text">No data</string>
+    <string name="no_data_text">Tidak ada data untuk ditampilkan</string>
     <string name="description_text">Deskripsi:</string>
     <string name="action_menu_show_all">Show all</string>
     <string name="action_menu_show_unread">Show unread</string>
