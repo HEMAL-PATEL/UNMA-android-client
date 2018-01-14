@@ -155,12 +155,6 @@ public class AnnouncementDetailActivity extends AppCompatActivity implements Dow
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
-    }
-
     @OnClick(R.id.attachment_layout)
     public void onAttachmentClicked(View view) {
         Announcement announcement = mViewModel.getAnnouncement().getValue();

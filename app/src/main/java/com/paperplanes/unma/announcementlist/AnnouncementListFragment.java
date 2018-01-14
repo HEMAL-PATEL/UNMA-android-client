@@ -160,7 +160,5 @@ public class AnnouncementListFragment extends Fragment {
         Intent i = new Intent(getActivity(), AnnouncementDetailActivity.class);
         i.putExtra(AnnouncementDetailActivity.EXTRA_ANNOUNCEMENT_ID, announcement.getId());
         startActivity(i);
-
-        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 }
