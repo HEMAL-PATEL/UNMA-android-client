@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.abdularis.dateview.DateBoxView;
@@ -15,6 +16,7 @@ import com.paperplanes.unma.R;
 import com.paperplanes.unma.common.DateUtil;
 import com.paperplanes.unma.common.FileUtil;
 import com.paperplanes.unma.model.Announcement;
+import com.paperplanes.unma.model.Attachment;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -39,6 +41,7 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int ITEM_HEADER_UNREAD = 2;
     private static final int ITEM_HEADER_READ = 3;
     private static final int ITEM_HEADER_READ_TODAY = 4;
+    private static final int ITEM_DATA_TOP_HEADING = 5;
 
     private Context mContext;
     private OnItemClickListener mClickListener;
@@ -56,6 +59,7 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (announcements.isEmpty())
             return;
 
+        Announcement topHeading = null;
         ArrayList<Object> unread = new ArrayList<>();
         ArrayList<Object> read = new ArrayList<>();
         ArrayList<Object> readToday = new ArrayList<>();
@@ -68,19 +72,28 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 else
                     read.add(announcement);
             }
+            else if (topHeading == null && DateUtil.isSameDay(todayDate, announcement.getLastUpdated())) {
+                topHeading = announcement;
+            }
             else {
                 unread.add(announcement);
             }
         }
 
+        String todayDateString = new SimpleDateFormat("dd MMM", Locale.US).format(todayDate);
+
         mDataList.clear();
+        if (topHeading != null) {
+            mDataList.add(new AnnouncementTopHeading(topHeading, todayDateString));
+        }
+
         if (!unread.isEmpty()) {
             mDataList.add(new UnreadHeader(unread.size()));
             mDataList.addAll(unread);
         }
 
         if (!readToday.isEmpty()) {
-            mDataList.add(new ReadTodayHeader(readToday.size(), new SimpleDateFormat("dd MMM", Locale.US).format(todayDate)));
+            mDataList.add(new ReadTodayHeader(readToday.size(), todayDateString));
             mDataList.addAll(readToday);
         }
 
@@ -106,6 +119,9 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case ITEM_HEADER_READ_TODAY:
                 view = inflater.inflate(R.layout.item_announcement_header_read_today, viewGroup, false);
                 return new ViewHolderReadTodayHeader(view);
+            case ITEM_DATA_TOP_HEADING:
+                view = inflater.inflate(R.layout.item_announcement_top_heading, viewGroup, false);
+                return new ViewHolderTopHeading(view);
         }
 
         view = inflater.inflate(R.layout.item_announcement, viewGroup, false);
@@ -130,6 +146,10 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case ITEM_HEADER_READ_TODAY:
                 ViewHolderReadTodayHeader viewHolderReadTodayHeader = (ViewHolderReadTodayHeader) viewHolder;
                 viewHolderReadTodayHeader.bindData((ReadTodayHeader) mDataList.get(i));
+                break;
+            case ITEM_DATA_TOP_HEADING:
+                ViewHolderTopHeading viewHolderTopHeading = (ViewHolderTopHeading) viewHolder;
+                viewHolderTopHeading.bind((AnnouncementTopHeading) mDataList.get(i));
         }
     }
 
@@ -141,6 +161,8 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return ITEM_HEADER_READ_TODAY;
         else if (mDataList.get(position) instanceof ReadHeader)
             return ITEM_HEADER_READ;
+        else if (mDataList.get(position) instanceof AnnouncementTopHeading)
+            return ITEM_DATA_TOP_HEADING;
         return ITEM_HEADER_UNREAD;
     }
 
@@ -161,6 +183,15 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public interface OnItemClickListener {
         void onClick(View itemView, Announcement announcement);
+    }
+
+    class AnnouncementTopHeading {
+        AnnouncementTopHeading(Announcement announcement, String date) {
+            this.announcement = announcement;
+            this.date = date;
+        }
+        String date;
+        Announcement announcement;
     }
 
     class UnreadHeader {
@@ -220,6 +251,43 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         void bindData(ReadTodayHeader readTodayHeader) {
             readCount.setText(String.valueOf(readTodayHeader.readCount));
             date.setText(readTodayHeader.date);
+        }
+    }
+
+    class ViewHolderTopHeading extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.anc_title) TextView title;
+        @BindView(R.id.publisher) TextView publisher;
+        @BindView(R.id.time) TextView time;
+        @BindView(R.id.date) TextView date;
+        @BindView(R.id.attachment_layout) LinearLayout attachmentLayout;
+        @BindView(R.id.file_type_image) ImageView attachmentFileIcon;
+        @BindView(R.id.attachment_filename) TextView attachmentFilename;
+
+        private AnnouncementTopHeading mCurrentAnn;
+
+        ViewHolderTopHeading(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(v -> callClickListener(v, mCurrentAnn.announcement));
+        }
+
+        void bind(AnnouncementTopHeading ann) {
+            mCurrentAnn = ann;
+
+            title.setText(ann.announcement.getTitle());
+            publisher.setText(ann.announcement.getPublisher());
+            time.setText(new SimpleDateFormat("HH:mm", Locale.US).format(ann.announcement.getLastUpdated()));
+            date.setText(ann.date);
+
+            Attachment attachment = ann.announcement.getAttachment();
+            if (attachment != null) {
+                attachmentLayout.setVisibility(View.VISIBLE);
+                attachmentFileIcon.setImageResource(FileUtil.getDrawableResourceForFileExt(attachment.getName()));
+                attachmentFilename.setText(attachment.getName());
+            } else {
+                attachmentLayout.setVisibility(View.GONE);
+            }
         }
     }
 
