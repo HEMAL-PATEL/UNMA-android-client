@@ -203,6 +203,9 @@ public class MediaListFragment extends Fragment implements MediaAdapter.OnClickL
         @Override
         public void onDownloadFinished(Announcement announcement) {
             mMediaAdapter.notifyItemChanged(announcement);
+            Toast.makeText(getActivity(),
+                    R.string.download_success,
+                    Toast.LENGTH_SHORT).show();
         }
 
         @Override

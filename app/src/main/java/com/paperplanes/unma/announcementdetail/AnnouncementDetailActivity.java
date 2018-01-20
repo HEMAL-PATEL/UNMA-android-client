@@ -294,6 +294,9 @@ public class AnnouncementDetailActivity extends AppCompatActivity implements Dow
     @Override
     public void onDownloadFinished(Announcement announcement) {
         showDownloadFinish();
+        Toast.makeText(this,
+                R.string.download_success,
+                Toast.LENGTH_SHORT).show();
     }
 
     @Override
