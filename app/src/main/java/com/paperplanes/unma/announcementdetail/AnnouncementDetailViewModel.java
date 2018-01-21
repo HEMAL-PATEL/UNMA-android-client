@@ -111,7 +111,7 @@ public class AnnouncementDetailViewModel extends ViewModel {
                         Announcement announcement = announcementOptional.get();
                         Description desc = announcement.getDescription();
                         if (desc != null) {
-                            if (desc.getContent() == null) {
+                            if (desc.getContent() == null || !desc.isOffline()) {
                                 mLoadingDescription.setValue(true);
                                 loadDescriptionContent(announcement);
                             } else {

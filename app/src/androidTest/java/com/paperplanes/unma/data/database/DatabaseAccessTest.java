@@ -22,6 +22,8 @@ import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -35,8 +37,7 @@ public class DatabaseAccessTest {
     DatabaseAccess dbAccess;
     DatabaseHelper dbHelper;
 
-    @Before
-    public void setup() {
+    private void reloadDatabase() {
         InstrumentationRegistry.getTargetContext().deleteDatabase(DatabaseHelper.DB_NAME);
         dbHelper = new DatabaseHelper(InstrumentationRegistry.getTargetContext());
         dbAccess = new DatabaseAccess(dbHelper);
@@ -46,13 +47,14 @@ public class DatabaseAccessTest {
     public void teardown() {
         dbHelper.close();
     }
-//
-//    private List<String> getAnnouncementIds() {
+
+//    private int queary_announcement_count() {
 //        SQLiteDatabase db = dbHelper.getReadableDatabase();
 //        Cursor c = db.rawQuery("SELECT id FROM " + DatabaseContract.Announcement.TABLE_NAME, null);
 //        if (c == null) {
-//            throw
+//            return -1;
 //        }
+//        return c.getCount();
 //    }
 
     private List<Announcement> getTestData() throws MalformedURLException {
@@ -80,16 +82,99 @@ public class DatabaseAccessTest {
     }
 
     @Test
+    public void getDescContent_test() {
+        reloadDatabase();
+        insert_raw_test_data("id1");
+
+        String content = dbAccess.getDescriptionContent("id1");
+
+        assertEquals(content, "desc content");
+    }
+
+    @Test
+    public void updateDescContent_test() {
+        reloadDatabase();
+        insert_raw_test_data("id1");
+
+        dbAccess.updateDescriptionContent("id1", "update");
+
+        String updated = dbAccess.getDescriptionContent("id1");
+
+        assertNotEquals("desc content", updated);
+        assertEquals("update", updated);
+    }
+
+    @Test
+    public void getAnnouncement_test() throws MalformedURLException {
+        reloadDatabase();
+        insert_raw_test_data("id_data");
+
+        Announcement res = dbAccess.getAnnouncement("id_data");
+        assertTrue(res.getId().equals("id_data"));
+        assertEquals("title", res.getTitle());
+        assertEquals(1500000, res.getLastUpdated().getTime());
+        assertTrue(res.isRead());
+
+        assertTrue(res.getDescription() != null);
+        assertTrue(res.getAttachment() != null);
+        assertEquals("desc url", res.getDescription().getUrl());
+        assertEquals(null, res.getDescription().getContent());
+        assertEquals(500, res.getDescription().getSize());
+        assertTrue(res.getDescription().isOffline());
+
+        assertEquals("att url", res.getAttachment().getUrl());
+        assertEquals("att path", res.getAttachment().getFilePath());
+        assertEquals("att fname", res.getAttachment().getName());
+        assertEquals("mime", res.getAttachment().getMimeType());
+        assertEquals(1024, res.getAttachment().getSize());
+    }
+
+    @Test
+    public void getAnnouncements_test() throws MalformedURLException {
+        reloadDatabase();
+        insert_raw_test_data("id1");
+        insert_raw_test_data("id2");
+
+        List<Announcement> results = dbAccess.getAnnouncements();
+        assertEquals(2, results.size());
+    }
+
+    @Test
     public void insertAnnouncement_test() throws MalformedURLException {
+        reloadDatabase();
+
         Announcement ann = getTestData().get(1);
 
         dbAccess.insert(ann);
 
         List<Announcement> res = dbAccess.getAnnouncements();
         assertThat(res.size(), is(1));
-        assertTrue(res.get(0).getId().equals(ann.getId()));
-        assertTrue(res.get(0).getDescription() != null);
-        assertTrue(res.get(0).getAttachment() != null);
+    }
+
+    private void insert_raw_test_data(String id) {
+        dbHelper.getWritableDatabase().execSQL(
+                "INSERT INTO " + DatabaseContract.Announcement.TABLE_NAME +
+                        "(" + DatabaseContract.Announcement._ID + "," +
+                        DatabaseContract.Announcement.TITLE + "," +
+                        DatabaseContract.Announcement.PUBLISHER + "," +
+                        DatabaseContract.Announcement.LAST_UPDATED + "," +
+                        DatabaseContract.Announcement.READ + "," +
+                        DatabaseContract.Announcement.DESC_URL + "," +
+                        DatabaseContract.Announcement.DESC_CONTENT + "," +
+                        DatabaseContract.Announcement.DESC_SIZE + "," +
+                        DatabaseContract.Announcement.DESC_AVAILABLE_OFFLINE + "," +
+                        DatabaseContract.Announcement.ATT_URL + "," +
+                        DatabaseContract.Announcement.ATT_FILE_PATH + "," +
+                        DatabaseContract.Announcement.ATT_FILE_NAME + "," +
+                        DatabaseContract.Announcement.ATT_MIME + "," +
+                        DatabaseContract.Announcement.ATT_SIZE +
+                        ") " +
+                        "VALUES (" +
+                        "'" + id + "'" + "," +
+                        "'title', 'publisher', 1500000, 'true', " +
+                        "'desc url', 'desc content', 500, 'true', " +
+                        "'att url', 'att path', 'att fname', 'mime', 1024)"
+        );
     }
 
 }

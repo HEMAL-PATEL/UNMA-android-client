@@ -108,7 +108,7 @@ public class ProfileRepositoryTest {
         TestSubscriber<Optional<Profile>> testSubscriber = new TestSubscriber<>();
 
         ProfileRepository repo = new ProfileRepository(profApi, profStore);
-        repo.fetch().subscribe();
+        repo.fetch().blockingAwait();
         verify(profApi).getProfile();
         repo.get().subscribe(testSubscriber);
         testSubscriber.assertNotComplete();
