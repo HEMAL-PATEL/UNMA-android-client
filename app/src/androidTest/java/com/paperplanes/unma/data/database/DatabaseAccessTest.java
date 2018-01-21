@@ -1,7 +1,6 @@
 package com.paperplanes.unma.data.database;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.database.DatabaseUtils;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -10,19 +9,17 @@ import com.paperplanes.unma.model.Attachment;
 import com.paperplanes.unma.model.Description;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -48,16 +45,7 @@ public class DatabaseAccessTest {
         dbHelper.close();
     }
 
-//    private int queary_announcement_count() {
-//        SQLiteDatabase db = dbHelper.getReadableDatabase();
-//        Cursor c = db.rawQuery("SELECT id FROM " + DatabaseContract.Announcement.TABLE_NAME, null);
-//        if (c == null) {
-//            return -1;
-//        }
-//        return c.getCount();
-//    }
-
-    private List<Announcement> getTestData() throws MalformedURLException {
+    private List<Announcement> get_announcement_test_data() throws MalformedURLException {
         List<Announcement> list = new ArrayList<>();
         list.add(new Announcement(
                 "id-sd8fs9fhs9ds9fhs",
@@ -98,10 +86,42 @@ public class DatabaseAccessTest {
 
         dbAccess.updateDescriptionContent("id1", "update");
 
-        String updated = dbAccess.getDescriptionContent("id1");
+        String updated =
+                DatabaseUtils.stringForQuery(
+                        dbHelper.getReadableDatabase(),
+                        "SELECT " + DatabaseContract.Announcement.DESC_CONTENT + " FROM " + DatabaseContract.Announcement.TABLE_NAME,
+                        null
+                );
 
         assertNotEquals("desc content", updated);
         assertEquals("update", updated);
+    }
+
+    @Test
+    public void updateAttachmentFilePath_test() {
+        reloadDatabase();
+        insert_raw_test_data("id1");
+
+        dbAccess.updateAttachmentFilePath("id1", "new/path");
+
+        String path = DatabaseUtils.stringForQuery(dbHelper.getReadableDatabase(),
+                "SELECT " + DatabaseContract.Announcement.ATT_FILE_PATH + " FROM " + DatabaseContract.Announcement.TABLE_NAME, null);
+
+        assertEquals("new/path", path);
+    }
+
+    @Test
+    public void updateAnnouncementAsRead_test() {
+        reloadDatabase();
+        insert_raw_test_data("id1");
+
+        dbAccess.updateAnnouncementAsRead("id1");
+
+        String res = DatabaseUtils.stringForQuery(dbHelper.getReadableDatabase(),
+                "SELECT " + DatabaseContract.Announcement.READ + " FROM " + DatabaseContract.Announcement.TABLE_NAME,
+                null);
+
+        assertTrue(Boolean.valueOf(res));
     }
 
     @Test
@@ -113,7 +133,7 @@ public class DatabaseAccessTest {
         assertTrue(res.getId().equals("id_data"));
         assertEquals("title", res.getTitle());
         assertEquals(1500000, res.getLastUpdated().getTime());
-        assertTrue(res.isRead());
+        assertFalse(res.isRead());
 
         assertTrue(res.getDescription() != null);
         assertTrue(res.getAttachment() != null);
@@ -143,12 +163,53 @@ public class DatabaseAccessTest {
     public void insertAnnouncement_test() throws MalformedURLException {
         reloadDatabase();
 
-        Announcement ann = getTestData().get(1);
+        Announcement ann = get_announcement_test_data().get(1);
 
         dbAccess.insert(ann);
 
-        List<Announcement> res = dbAccess.getAnnouncements();
-        assertThat(res.size(), is(1));
+        long count = DatabaseUtils.queryNumEntries(dbHelper.getReadableDatabase(), DatabaseContract.Announcement.TABLE_NAME);
+
+        assertEquals(1, count);
+    }
+
+    @Test
+    public void insertAll_test() throws MalformedURLException {
+        reloadDatabase();
+
+        dbAccess.insertAll(get_announcement_test_data());
+
+        long count = DatabaseUtils.queryNumEntries(dbHelper.getReadableDatabase(), DatabaseContract.Announcement.TABLE_NAME);
+
+        assertEquals(2, count);
+    }
+
+    @Test
+    public void insertOrReplace_test() throws MalformedURLException {
+        reloadDatabase();
+
+        List<Announcement> list = new ArrayList<>();
+        list.addAll(get_announcement_test_data());
+        list.addAll(get_announcement_test_data());
+        list.addAll(get_announcement_test_data());
+
+        dbAccess.insertOrReplaceAll(list);
+
+        long count = DatabaseUtils.queryNumEntries(dbHelper.getReadableDatabase(), DatabaseContract.Announcement.TABLE_NAME);
+
+        assertEquals(2, count);
+    }
+
+    @Test
+    public void clearAll_test() {
+        reloadDatabase();
+        insert_raw_test_data("id1");
+        insert_raw_test_data("id2");
+
+        dbAccess.clearAll();
+
+        long count = DatabaseUtils.queryNumEntries(dbHelper.getReadableDatabase(), DatabaseContract.Announcement.TABLE_NAME);
+
+        assertEquals(0, count);
     }
 
     private void insert_raw_test_data(String id) {
@@ -171,7 +232,7 @@ public class DatabaseAccessTest {
                         ") " +
                         "VALUES (" +
                         "'" + id + "'" + "," +
-                        "'title', 'publisher', 1500000, 'true', " +
+                        "'title', 'publisher', 1500000, 'false', " +
                         "'desc url', 'desc content', 500, 'true', " +
                         "'att url', 'att path', 'att fname', 'mime', 1024)"
         );

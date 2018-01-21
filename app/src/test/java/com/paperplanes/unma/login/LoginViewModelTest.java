@@ -6,16 +6,11 @@ import com.paperplanes.unma.ResourceProvider;
 import com.paperplanes.unma.auth.Authentication;
 import com.paperplanes.unma.model.LoginResult;
 
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 import io.reactivex.Single;
 import io.reactivex.android.plugins.RxAndroidPlugins;

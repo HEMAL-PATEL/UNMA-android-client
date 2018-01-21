@@ -2,10 +2,8 @@ package com.paperplanes.unma.announcementdetail;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 
-import com.paperplanes.unma.announcementdetail.AnnouncementDetailViewModel;
 import com.paperplanes.unma.common.Optional;
 import com.paperplanes.unma.data.AnnouncementRepository;
-import com.paperplanes.unma.data.DownloadManager;
 import com.paperplanes.unma.model.Announcement;
 import com.paperplanes.unma.model.Description;
 
@@ -14,9 +12,6 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 import java.util.Date;
 

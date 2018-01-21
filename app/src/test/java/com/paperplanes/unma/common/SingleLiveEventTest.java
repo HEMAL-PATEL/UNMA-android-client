@@ -1,16 +1,13 @@
 package com.paperplanes.unma.common;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
-import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
 
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 /**

@@ -2,7 +2,6 @@ package com.paperplanes.unma.announcementlist;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 
-import com.paperplanes.unma.auth.Session;
 import com.paperplanes.unma.auth.SessionManager;
 import com.paperplanes.unma.data.AnnouncementRepository;
 import com.paperplanes.unma.model.Announcement;
@@ -35,7 +34,7 @@ public class AnnouncementListViewModelTest {
     public TestRule rule = new InstantTaskExecutorRule();
 
     AnnouncementRepository repo;
-    AnnouncementListViewModel viewModel;
+    SessionManager sessMan;
 
     @BeforeClass
     public static void setUpClass() {
@@ -45,31 +44,64 @@ public class AnnouncementListViewModelTest {
     @Before
     public void setUp() {
         List<Announcement> a = new ArrayList<>();
-        a.add(new Announcement("", "", null, "", new Date(), null, false));
-        a.add(new Announcement("", "", null, "", new Date(), null, false));
-        a.add(new Announcement("", "", null, "", new Date(), null, false));
+        a.add(new Announcement(
+                "",
+                "",
+                null,
+                "",
+                new Date(),
+                null,
+                false));
+        a.add(new Announcement(
+                "",
+                "",
+                null,
+                "",
+                new Date(),
+                null,
+                false));
+        a.add(new Announcement(
+                "",
+                "",
+                null,
+                "",
+                new Date(),
+                null,
+                false));
 
+        sessMan = mock(SessionManager.class);
         repo = mock(AnnouncementRepository.class);
         when(repo.getAnnouncements()).thenReturn(Flowable.just(a));
         when(repo.fetchAnnouncements()).thenReturn(Completable.complete());
-
-        viewModel = new AnnouncementListViewModel(repo, mock(SessionManager.class));
     }
 
     @Test
     public void loadDataList_test() {
+        AnnouncementListViewModel viewModel = new AnnouncementListViewModel(repo, sessMan);
+
         viewModel.startListenToData();
+
         assertNotNull(viewModel.getAnnouncements().getValue());
         verify(repo).getAnnouncements();
         verify(repo).fetchAnnouncements();
+    }
+
+    @Test
+    public void refreshForFirstTime_test() {
+        AnnouncementListViewModel viewModel = new AnnouncementListViewModel(repo, sessMan);
 
         viewModel.startListenToData();
-        verify(repo, times(1)).fetchAnnouncements();
+        viewModel.startListenToData();
+
+        verify(repo, timeout(1)).fetchAnnouncements();
     }
 
     @Test
     public void refreshDataList_test() {
+        AnnouncementListViewModel viewModel = new AnnouncementListViewModel(repo, sessMan);
+
         viewModel.refresh();
+
         verify(repo).fetchAnnouncements();
     }
 }

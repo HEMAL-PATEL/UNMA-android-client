@@ -8,9 +8,7 @@ import com.paperplanes.unma.common.Optional;
 import com.paperplanes.unma.data.network.api.ProfileApi;
 import com.paperplanes.unma.data.network.api.response.JsonResp;
 import com.paperplanes.unma.data.network.api.response.ProfileRespData;
-import com.paperplanes.unma.data.network.api.response.ProfileUpdateRespData;
 import com.paperplanes.unma.model.Profile;
-import com.paperplanes.unma.model.ProfileUpdateResult;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -19,21 +17,14 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 import io.reactivex.Single;
 import io.reactivex.android.plugins.RxAndroidPlugins;
-import io.reactivex.functions.Consumer;
-import io.reactivex.observers.DisposableCompletableObserver;
-import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.observers.TestObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.TestSubscriber;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 /**
@@ -106,11 +97,13 @@ public class ProfileRepositoryTest {
         setUpApiForProfileResult();
 
         TestSubscriber<Optional<Profile>> testSubscriber = new TestSubscriber<>();
-
         ProfileRepository repo = new ProfileRepository(profApi, profStore);
         repo.fetch().blockingAwait();
+
         verify(profApi).getProfile();
+
         repo.get().subscribe(testSubscriber);
+
         testSubscriber.assertNotComplete();
         testSubscriber.assertNoErrors();
         testSubscriber.assertValueCount(1);
