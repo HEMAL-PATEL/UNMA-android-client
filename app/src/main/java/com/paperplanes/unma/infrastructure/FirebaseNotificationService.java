@@ -175,7 +175,7 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
         openAnnouncementDetailIntent.putExtra(AnnouncementDetailActivity.EXTRA_ANNOUNCEMENT_ID, announcementId);
         return PendingIntent.getActivity(
                 this,
-                231,
+                0,
                 openAnnouncementDetailIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }

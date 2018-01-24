@@ -69,14 +69,18 @@ public class ProfileRepository {
                 })
                 .map(resp -> {
                     ProfileRespData.ClassRespData respCls = resp.getRespClass();
-                    Profile.ProfileClass cls = new Profile.ProfileClass(
-                            respCls.getProg(),
-                            respCls.getName(),
-                            respCls.getYear(),
-                            respCls.getType()
-                    );
+                    Profile.ProfileClass cls = null;
+                    if (respCls != null) {
+                        cls = new Profile.ProfileClass(
+                                respCls.getProg(),
+                                respCls.getName(),
+                                respCls.getYear(),
+                                respCls.getType()
+                        );
+                    }
 
                     return new Profile(
+                            resp.getUserType(),
                             resp.getName(),
                             resp.getUsername(),
                             cls

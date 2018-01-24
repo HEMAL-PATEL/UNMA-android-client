@@ -20,6 +20,8 @@ import com.paperplanes.unma.data.MemoryReactiveStore;
 import com.paperplanes.unma.data.database.DatabaseAccess;
 import com.paperplanes.unma.data.database.DatabaseHelper;
 import com.paperplanes.unma.data.network.WebAuthentication;
+import com.paperplanes.unma.data.network.WebAuthenticationLecturer;
+import com.paperplanes.unma.data.network.WebAuthenticationStudent;
 import com.paperplanes.unma.data.network.api.AnnouncementApi;
 import com.paperplanes.unma.data.network.api.AuthenticationApi;
 import com.paperplanes.unma.data.network.api.WebServiceGenerator;
@@ -83,8 +85,18 @@ public class AppModule {
     }
 
     @Provides
-    Authentication provideAuthService(AuthenticationApi authApi, SessionManager sessionManager) {
-        return new WebAuthentication(authApi, sessionManager);
+    WebAuthenticationStudent provideAuthStudentService(AuthenticationApi authApi, SessionManager sessionManager) {
+        return new WebAuthenticationStudent(authApi, sessionManager);
+    }
+
+    @Provides
+    WebAuthenticationLecturer provideAuthLecturerService(AuthenticationApi authApi, SessionManager sessionManager) {
+        return new WebAuthenticationLecturer(authApi, sessionManager);
+    }
+
+    @Provides
+    Authentication provideAuthService(WebAuthenticationStudent auth) {
+        return auth;
     }
 
     @Provides
@@ -173,8 +185,10 @@ public class AppModule {
     }
 
     @Provides
-    LoginViewModel provideLoginViewModel(ResourceProvider resourceProvider, Authentication auth) {
-        return new LoginViewModel(resourceProvider, auth);
+    LoginViewModel provideLoginViewModel(ResourceProvider resourceProvider,
+                                         WebAuthenticationStudent authStudent,
+                                         WebAuthenticationLecturer authLecturer) {
+        return new LoginViewModel(resourceProvider, authStudent, authLecturer);
     }
 
     @Provides

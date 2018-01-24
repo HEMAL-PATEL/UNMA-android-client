@@ -44,7 +44,7 @@ public class ProfileDetailViewModelTest {
         sessMan = mock(SessionManager.class);
 
         when(repo.fetch()).thenReturn(Completable.complete());
-        when(repo.get()).thenReturn(Flowable.just(Optional.of(new Profile("", "", null))));
+        when(repo.get()).thenReturn(Flowable.just(Optional.of(new Profile(1, "", "", null))));
     }
 
     @Test

@@ -8,10 +8,13 @@ import com.google.gson.annotations.SerializedName;
 
 public class ProfileRespData {
 
+    @SerializedName("type") int mUserType;
     @SerializedName("name") String mName;
     @SerializedName("username") String mUsername;
     @SerializedName("fcm_token") String mFcmToken;
     @SerializedName("class") ClassRespData mClass;
+
+    public int getUserType() { return mUserType; }
 
     public String getName() {
         return mName;

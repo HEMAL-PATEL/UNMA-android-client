@@ -30,6 +30,7 @@ import com.paperplanes.unma.R;
 import com.paperplanes.unma.announcementlist.AnnouncementListFragment;
 import com.paperplanes.unma.announcementmedialist.MediaListFragment;
 import com.paperplanes.unma.auth.SessionManager;
+import com.paperplanes.unma.common.AppUtil;
 import com.paperplanes.unma.common.ErrorUtil;
 import com.paperplanes.unma.common.NetworkUtil;
 import com.paperplanes.unma.infrastructure.DeviceConnectivityObserver;
@@ -83,6 +84,9 @@ public class MainActivity extends AppCompatActivity implements DeviceConnectivit
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AppUtil.checkGooglePlayServicesAvailability(this);
+
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         ((App) getApplication()).getAppComponent().inject(this);

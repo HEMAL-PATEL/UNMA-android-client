@@ -9,6 +9,7 @@ import com.paperplanes.unma.auth.Authentication;
 import com.paperplanes.unma.common.exceptions.NoConnectivityException;
 import com.paperplanes.unma.common.SingleLiveEvent;
 import com.paperplanes.unma.model.LoginResult;
+import com.paperplanes.unma.model.Profile;
 
 import java.net.SocketException;
 
@@ -25,7 +26,8 @@ import io.reactivex.observers.DisposableSingleObserver;
 
 public class LoginViewModel extends ViewModel {
 
-    private Authentication mAuthentication;
+    private Authentication mAuthStudent;
+    private Authentication mAuthLecturer;
     private CompositeDisposable mCompositeDisposable;
     private ResourceProvider mResourceProvider;
 
@@ -36,8 +38,11 @@ public class LoginViewModel extends ViewModel {
     private SingleLiveEvent<LoginResult> mLoginResult;
 
     @Inject
-    public LoginViewModel(ResourceProvider resourceProvider, Authentication authentication) {
-        mAuthentication = authentication;
+    public LoginViewModel(ResourceProvider resourceProvider,
+                          Authentication authenticationForStudent,
+                          Authentication authenticationForLecturer) {
+        mAuthStudent = authenticationForStudent;
+        mAuthLecturer = authenticationForLecturer;
         mResourceProvider = resourceProvider;
 
         mLoading = new SingleLiveEvent<>();
@@ -53,13 +58,23 @@ public class LoginViewModel extends ViewModel {
             mCompositeDisposable.dispose();
     }
 
-    void login(@NonNull String username, @NonNull String password) {
+    void login(@NonNull String username, @NonNull String password, int userType) {
+        String regex = "(\\d{2}\\.){2}\\d\\.\\d{4}";
+        if (userType == 2)
+            regex = "\\d{10}";
+
         if (username.isEmpty()) {
-            mUsernameErr.setValue(mResourceProvider.getString(R.string.err_username_empty));
+            if (userType == Profile.USER_TYPE_STUDENT)
+                mUsernameErr.setValue(mResourceProvider.getString(R.string.err_username_empty));
+            else
+                mUsernameErr.setValue(mResourceProvider.getString(R.string.err_username_empty_2));
             return;
         }
-        else if (!username.matches("(\\d{2}\\.){2}\\d\\.\\d{4}")) {
-            mUsernameErr.setValue(mResourceProvider.getString(R.string.err_malformed_username));
+        else if (!username.matches(regex)) {
+            if (userType == Profile.USER_TYPE_STUDENT)
+                mUsernameErr.setValue(mResourceProvider.getString(R.string.err_malformed_username));
+            else
+                mUsernameErr.setValue(mResourceProvider.getString(R.string.err_malformed_username_2));
             return;
         }
 
@@ -68,9 +83,13 @@ public class LoginViewModel extends ViewModel {
             return;
         }
 
+        Authentication auth = mAuthStudent;
+        if (userType == Profile.USER_TYPE_LECTURER)
+            auth = mAuthLecturer;
+
         prepareCompositeDisposable();
         mLoading.setValue(true);
-        mCompositeDisposable.add(mAuthentication.login(username, password)
+        mCompositeDisposable.add(auth.login(username, password)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableSingleObserver<LoginResult>() {
                     @Override

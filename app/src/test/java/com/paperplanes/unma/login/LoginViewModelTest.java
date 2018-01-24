@@ -27,7 +27,8 @@ import static org.junit.Assert.assertNull;
 public class LoginViewModelTest {
 
     ResourceProvider resourceProvider;
-    Authentication authentication;
+    Authentication authStudent;
+    Authentication authLecturer;
 
     @Rule
     public TestRule rule = new InstantTaskExecutorRule();
@@ -40,59 +41,61 @@ public class LoginViewModelTest {
     @Before
     public void setUp() {
         resourceProvider = mock(ResourceProvider.class);
-        authentication = mock(Authentication.class);
+        authStudent = mock(Authentication.class);
+        authLecturer = mock(Authentication.class);
+
         when(resourceProvider.getString(anyInt())).thenReturn("error message");
-        when(authentication.login("14.14.1.0002", "123")).thenReturn(Single.error(new Throwable()));
-        when(authentication.login("14.14.1.0002", "1")).thenReturn(Single.just(new LoginResult()));
+        when(authStudent.login("14.14.1.0002", "123")).thenReturn(Single.error(new Throwable()));
+        when(authStudent.login("14.14.1.0002", "1")).thenReturn(Single.just(new LoginResult()));
     }
 
     @Test
     public void login_correct() {
-        LoginViewModel viewModel = new LoginViewModel(resourceProvider, authentication);
+        LoginViewModel viewModel = new LoginViewModel(resourceProvider, authStudent, authLecturer);
 
-        viewModel.login("14.14.1.0002", "1");
+        viewModel.login("14.14.1.0002", "1", 1);
         assertNull(viewModel.getGeneralErr().getValue());
         assertNotNull(viewModel.getLoginResult().getValue());
-        verify(authentication).login("14.14.1.0002", "1");
+        verify(authStudent).login("14.14.1.0002", "1");
     }
 
     @Test
     public void login_wrongAccount() {
-        LoginViewModel viewModel = new LoginViewModel(resourceProvider, authentication);
+        LoginViewModel viewModel = new LoginViewModel(resourceProvider, authStudent, authLecturer);
 
-        viewModel.login("14.14.1.0002", "123");
+        viewModel.login("14.14.1.0002", "123", 1);
         assertNotNull(viewModel.getGeneralErr().getValue());
     }
 
     @Test
     public void login_wrongNpmFormat() {
-        LoginViewModel viewModel = new LoginViewModel(resourceProvider, authentication);
+        LoginViewModel viewModel = new LoginViewModel(resourceProvider, authStudent, authLecturer);
 
-        viewModel.login("14.141.0002", "123");
+        viewModel.login("14.141.0002", "123", 1);
         assertNotNull(viewModel.getUsernameErr().getValue());
     }
 
     @Test
     public void login_emptyNpm() {
-        LoginViewModel viewModel = new LoginViewModel(resourceProvider, authentication);
+        LoginViewModel viewModel = new LoginViewModel(resourceProvider, authStudent, authLecturer);
 
-        viewModel.login("", "123");
+        viewModel.login("", "123", 1);
         assertNotNull(viewModel.getUsernameErr().getValue());
     }
 
     @Test
     public void login_emptyPwd() {
-        LoginViewModel viewModel = new LoginViewModel(resourceProvider, authentication);
+        LoginViewModel viewModel = new LoginViewModel(resourceProvider, authStudent, authLecturer);
 
-        viewModel.login("14.14.1.0002", "");
+        viewModel.login("14.14.1.0002", "", 1);
         assertNotNull(viewModel.getPasswordErr().getValue());
     }
 
     @Test
     public void login_emptyAll() {
-        LoginViewModel viewModel = new LoginViewModel(resourceProvider, authentication);
+        LoginViewModel viewModel = new LoginViewModel(resourceProvider, authStudent, authLecturer);
 
-        viewModel.login("", "");
+        viewModel.login("", "", 1);
         assertNotNull(viewModel.getUsernameErr().getValue());
     }
 

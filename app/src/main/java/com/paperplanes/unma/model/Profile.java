@@ -6,14 +6,27 @@ package com.paperplanes.unma.model;
 
 public class Profile {
 
+    public static final int USER_TYPE_STUDENT = 1;
+    public static final int USER_TYPE_LECTURER = 2;
+
+    private int mUserType;
     private String mName;
     private String mUsername;
     private ProfileClass mProfileClass;
 
-    public Profile(String name, String username, ProfileClass profileClass) {
+    public Profile(int userType, String name, String username, ProfileClass profileClass) {
+        mUserType = userType;
         mName = name;
         mUsername = username;
         mProfileClass = profileClass;
+    }
+
+    public int getUserType() {
+        return mUserType;
+    }
+
+    public void setUserType(int userType) {
+        mUserType = userType;
     }
 
     public String getName() {

@@ -20,7 +20,8 @@ public interface AuthenticationApi {
     Single<JsonResp<AuthRespData>> login(
             @Field("username") String username,
             @Field("password") String password,
-            @Field("fcm_token") String fcmToken
+            @Field("fcm_token") String fcmToken,
+            @Field("user_type") int userType
     );
 
     @DELETE("session")

@@ -57,4 +57,13 @@
     <string name="in_app_notif_no_connectivity">Tidak ada konektivitas jaringan :(</string>
     <string name="in_app_auto_refresh_notif">Mengambil data baru dari server</string>
     <string name="download_success">Download success!</string>
+    <string name="text_help">Untuk login sebagai mahasiswa pastikan \'Login sebagai dosen?\' tidak dicentang lalu masukan NPM dan password akun-nya.\nformat NPM. misal 14.14.1.0000\n\nUntuk login sebagai dosen pastikan \'Login sebagai dosen?\' dicentang lalu masukan NIDN dan password akun-nya.\nformat NIDN. misal 0123123123</string>
+    <string name="text_nidn">Nidn</string>
+    <string name="text_npm">Npm</string>
+    <string name="err_username_empty_2">NIDN harus diisi</string>
+    <string name="err_malformed_username_2">Format NIDN tidak benar</string>
+    <string name="text_warning">Perhatian!</string>
+    <string name="text_google_play_services_unavail">Aplikasi tidak akan menerima pemberitahuan karena Google Play Services tidak terpasang atau telah terjadi kesalahan. Silakan pasang atau perbarui Google Play Services pada perangkat anda.</string>
+    <string name="text_unsupported_device">Maaf, perangkat anda belum dapat didukung.</string>
+    <string name="text_unavailable">Tidak tersedia.</string>
 </resources>

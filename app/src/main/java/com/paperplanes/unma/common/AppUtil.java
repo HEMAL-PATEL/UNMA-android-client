@@ -3,11 +3,19 @@ package com.paperplanes.unma.common;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.paperplanes.unma.R;
 
 import java.util.List;
 
@@ -47,5 +55,25 @@ public final class AppUtil {
 
     public static void requestWritePermission(Fragment fragment) {
         fragment.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_PERM_CODE);
+    }
+
+    public static void checkGooglePlayServicesAvailability(Context activityContext) {
+        GoogleApiAvailability api = GoogleApiAvailability.getInstance();
+        int resultCode = api.isGooglePlayServicesAvailable(activityContext);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (api.isUserResolvableError(resultCode)) {
+                Dialog dialog =
+                        new AlertDialog.Builder(activityContext)
+                                .setTitle(R.string.text_warning)
+                                .setMessage(R.string.text_google_play_services_unavail)
+                                .setPositiveButton("Ok", null)
+                                .create();
+                dialog.show();
+            }
+            else {
+                Toast.makeText(activityContext, R.string.text_unsupported_device, Toast.LENGTH_LONG).show();
+                ((Activity) activityContext).finish();
+            }
+        }
     }
 }

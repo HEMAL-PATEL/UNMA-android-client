@@ -72,9 +72,21 @@ public class ProfileDetailFragment extends Fragment {
         mUsername.setText(profile.getUsername());
 
         Profile.ProfileClass cls = profile.getProfileClass();
-        String str = cls.getStudyProgram() + " " + cls.getClassName() + " " + String.valueOf(cls.getClassYear());
-        mClass.setText(str);
-        mClsType.setText(cls.getClassType());
+        if (profile.getUserType() == Profile.USER_TYPE_STUDENT && cls != null) {
+            String str = cls.getStudyProgram() + " " + cls.getClassName() + " " + String.valueOf(cls.getClassYear());
+            mClass.setText(str);
+            mClsType.setText(cls.getClassType());
+
+            mClass.setTextColor(getResources().getColor(R.color.sub_text));
+            mClsType.setTextColor(getResources().getColor(R.color.sub_text));
+        }
+        else {
+            mClass.setText(R.string.text_unavailable);
+            mClsType.setText(R.string.text_unavailable);
+
+            mClass.setTextColor(getResources().getColor(R.color.colorTextError));
+            mClsType.setTextColor(getResources().getColor(R.color.colorTextError));
+        }
     }
 
     private void showLoading(boolean show) {

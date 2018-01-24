@@ -20,10 +20,10 @@
             android:theme="@style/LaunchScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
         <activity
             android:name=".login.LoginActivity"
             android:screenOrientation="portrait">
@@ -45,7 +45,8 @@
         </service>
         <service android:name=".data.DownloadManagerService"/>
 
-        <activity android:name=".main.MainActivity"
+        <activity
+            android:name=".main.MainActivity"
             android:launchMode="singleTop"/>
         <activity
             android:name=".announcementdetail.AnnouncementDetailActivity"
@@ -62,18 +63,22 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.MainActivity"/>
         </activity>
-        <activity android:name=".profileupdate.ProfileUpdateActivity"
-                  android:parentActivityName=".main.MainActivity">
+        <activity
+            android:name=".profileupdate.ProfileUpdateActivity"
+            android:parentActivityName=".main.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.MainActivity"/>
         </activity>
-        <activity android:name=".settings.SettingsActivity"
-                  android:theme="@style/AppTheme"
-                  android:parentActivityName=".main.MainActivity">
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:parentActivityName=".main.MainActivity"
+            android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.MainActivity"/>
+        </activity>
+        <activity android:name=".help.HelpActivity">
         </activity>
     </application>
 
