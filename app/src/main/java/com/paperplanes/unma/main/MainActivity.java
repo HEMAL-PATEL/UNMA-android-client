@@ -265,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements DeviceConnectivit
 
     private void goToProfileDetail() {
         mCurrentFragmentTag = TAG_FRAG_PROFILE_DETAIL;
-        mToolbar.setTitle("Profile");
+        mToolbar.setTitle(R.string.text_profile);
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
                 .replace(R.id.content_layout, mProfileDetailFragment, TAG_FRAG_PROFILE_DETAIL)

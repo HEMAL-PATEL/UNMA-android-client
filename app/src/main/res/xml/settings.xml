@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-        android:title="Notifications">
+        android:title="@string/settings_category_title">
         <RingtonePreference
             android:key="@string/pref_notification_sound"
-            android:title="Notification Sound"
+            android:title="@string/settings_item_notif_sound"
             android:ringtoneType="notification"
             android:showSilent="false"/>
 
         <RingtonePreference
             android:key="@string/pref_in_app_notification_sound"
-            android:title="In App Notification Sound"
+            android:title="@string/settings_item_inapp_notif"
             android:ringtoneType="notification"
             android:showSilent="false"/>
 
         <CheckBoxPreference
             android:key="@string/pref_vibrate"
-            android:title="Vibrate"
+            android:title="@string/settings_item_vibrate"
             android:defaultValue="false"/>
     </PreferenceCategory>
 </PreferenceScreen>

@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginBottom="24dp"
-                android:text="Profile Detail"
+                android:text="@string/text_profile_detail"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:textAlignment="center"/>
@@ -50,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
                     android:layout_marginTop="16dp"
-                    android:text="Name"
+                    android:text="@string/text_name"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
 
@@ -91,7 +91,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
                     android:layout_marginTop="8dp"
-                    android:text="Username"
+                    android:text="@string/text_username"
                     app:layout_constraintStart_toStartOf="parent"/>
 
                 <TextView
@@ -128,7 +128,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
                     android:layout_marginTop="8dp"
-                    android:text="Kelas"
+                    android:text="@string/text_class"
                     app:layout_constraintStart_toStartOf="parent"/>
 
                 <TextView
@@ -189,7 +189,7 @@
                 android:background="@drawable/bg_profile_update_btn"
                 android:padding="8dp"
                 android:textColor="#043ea3"
-                android:text="Update Password"/>
+                android:text="@string/text_update_password"/>
 
         </LinearLayout>
 

@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:hint="Old Password"
+            android:hint="@string/text_old_password"
             android:inputType="textPassword"/>
     </android.support.design.widget.TextInputLayout>
 
@@ -54,7 +54,7 @@
             android:id="@+id/new_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="New Password"
+            android:hint="@string/text_new_password"
             android:inputType="textPassword"/>
     </android.support.design.widget.TextInputLayout>
 
@@ -67,7 +67,7 @@
         android:layout_marginTop="24dp"
         android:background="@drawable/bg_btn_login"
         android:padding="8dp"
-        android:text="Update password"
+        android:text="@string/text_update_password"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

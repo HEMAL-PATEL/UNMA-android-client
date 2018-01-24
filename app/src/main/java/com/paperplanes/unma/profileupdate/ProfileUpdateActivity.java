@@ -45,7 +45,7 @@ public class ProfileUpdateActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle("Update Password");
+            actionBar.setTitle(R.string.text_update_password);
         }
 
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(ProfileUpdateViewModel.class);
@@ -62,7 +62,7 @@ public class ProfileUpdateActivity extends AppCompatActivity {
     private void onSuccess(Void voidParam) {
         if (dialog != null)
             dialog.dismiss();
-        Toast.makeText(this, "Password updated", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.text_password_updated, Toast.LENGTH_SHORT).show();
         onBackPressed();
     }
 
