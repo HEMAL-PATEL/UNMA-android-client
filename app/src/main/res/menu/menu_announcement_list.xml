@@ -27,4 +27,9 @@
         app:showAsAction="never"
         android:title="@string/action_menu_force_refresh"
         android:id="@+id/menu_force_refresh"/>
+
+    <item
+        app:showAsAction="never"
+        android:title="@string/action_menu_randomize_date_box_color"
+        android:id="@+id/menu_randomize_date_box_color"/>
 </menu>

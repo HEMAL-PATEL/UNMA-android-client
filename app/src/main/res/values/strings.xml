@@ -66,4 +66,5 @@
     <string name="text_google_play_services_unavail">Aplikasi tidak akan menerima pemberitahuan karena Google Play Services tidak terpasang atau telah terjadi kesalahan. Silakan pasang atau perbarui Google Play Services pada perangkat anda.</string>
     <string name="text_unsupported_device">Maaf, perangkat anda belum dapat didukung.</string>
     <string name="text_unavailable">Tidak tersedia.</string>
+    <string name="action_menu_randomize_date_box_color">Acak Warna Tanggal</string>
 </resources>

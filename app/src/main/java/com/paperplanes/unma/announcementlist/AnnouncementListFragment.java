@@ -28,6 +28,7 @@ import com.paperplanes.unma.model.Announcement;
 
 import javax.inject.Inject;
 
+import abdularis.github.com.materialcolorrandomizer.MaterialColorRandom;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.functions.Predicate;
@@ -104,6 +105,10 @@ public class AnnouncementListFragment extends Fragment {
                 break;
             case R.id.menu_force_refresh:
                 mViewModel.forceRefresh();
+                return true;
+            case R.id.menu_randomize_date_box_color:
+                MaterialColorRandom.getInstance(getActivity()).clearColors();
+                mAnnouncementAdapter.notifyDataSetChanged();
                 return true;
         }
 
