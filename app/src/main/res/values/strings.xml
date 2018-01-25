@@ -7,14 +7,14 @@
     <string name="close_drawer">Close Drawer</string>
 
     <string name="msg_login_success">Login sukses</string>
-    <string name="msg_logging_in">Logging in…</string>
+    <string name="msg_logging_in">Sedang login…</string>
 
     <string name="err_username_empty">NPM harus diisi</string>
     <string name="err_password_empty">Password harus diisi</string>
     <string name="err_malformed_username">Format NPM tidak benar</string>
-    <string name="err_no_connectivity">Tidak ada koneksi</string>
+    <string name="err_no_connectivity">Tidak ada koneksi jaringan</string>
     <string name="err_cant_connect">Tidak dapat terhubung ke server</string>
-    <string name="err_unknown">Telah terjadi kesalahan</string>
+    <string name="err_unknown">Terjadi kesalahan. Silakan coba lagi</string>
     <string name="title_about">Tentang</string>
     <string name="about_developer_name">Abdul Aris Rahmanudin</string>
     <string name="about_developer">Pengembang:</string>
@@ -27,7 +27,7 @@
     <string name="action_menu_show_unread">Tampil belum dibaca</string>
     <string name="action_menu_show_read">Tampil dibaca</string>
     <string name="action_menu_show_attachment">Tampil berlampiran</string>
-    <string name="action_menu_force_refresh">Force refresh</string>
+    <string name="action_menu_force_refresh">Reset data</string>
     <string name="action_menu_filter">Filter</string>
     <string name="action_nav_announcements">Pengumuman</string>
     <string name="action_nav_media">Media</string>
@@ -36,7 +36,7 @@
     <string name="action_nav_logout">Logout</string>
     <string name="text_loading">Loading</string>
     <string name="text_rendering">Rendering</string>
-    <string name="text_write_permission_denied">Permission denied, please allow to download!</string>
+    <string name="text_write_permission_denied">Permission denied, silakan izinkan untuk men-download!</string>
     <string name="text_download_failed">Gagal men-download</string>
     <string name="title_announcements">Pengumuman</string>
     <string name="title_attachment_files">Berkas Lampiran</string>
