@@ -6,8 +6,8 @@ android {
         applicationId "com.paperplanes.unma"
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        versionCode 1412120
+        versionName "1.2.0-alpha"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
