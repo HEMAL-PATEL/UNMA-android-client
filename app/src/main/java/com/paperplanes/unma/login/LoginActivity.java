@@ -53,6 +53,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        AppUtil.checkGooglePlayServicesAvailability(this);
+
         ((App) getApplication()).getAppComponent().inject(this);
         if (mSessionManager.isSessionSet()) {
             goToMainActivity();
@@ -72,12 +74,6 @@ public class LoginActivity extends AppCompatActivity {
 
             mUsername.setError(null);
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        AppUtil.checkGooglePlayServicesAvailability(this);
     }
 
     private void initViewModel() {
