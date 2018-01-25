@@ -62,13 +62,7 @@ public final class AppUtil {
         int resultCode = api.isGooglePlayServicesAvailable(activityContext);
         if (resultCode != ConnectionResult.SUCCESS) {
             if (api.isUserResolvableError(resultCode)) {
-                Dialog dialog =
-                        new AlertDialog.Builder(activityContext)
-                                .setTitle(R.string.text_warning)
-                                .setMessage(R.string.text_google_play_services_unavail)
-                                .setPositiveButton("Ok", null)
-                                .create();
-                dialog.show();
+                api.getErrorDialog((Activity) activityContext, resultCode, 1234).show();
             }
             else {
                 Toast.makeText(activityContext, R.string.text_unsupported_device, Toast.LENGTH_LONG).show();
